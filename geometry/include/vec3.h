@@ -12,12 +12,13 @@ public:
     Vec3 operator +(const Vec3& b);
     Vec3 operator -(const Vec3& b);
     Vec3 operator *(const Vec3& b);//cross
-    Vec3 operator /(const Vec3& b);//dot 
+    double operator /(const Vec3& b);//dot 
     Vec3 operator *(double k);
     Vec3 operator /(double k);
     double mod();
+    double mod2();
     Vec3 unitize();
-    Vec3 reflect(const Vec3& n);
+    Vec3 reflect(Vec3& n);
     Vec3 rotate(Vec3 axis, double alpha);
     friend std::istream& operator >>(std::istream& , Vec3& );
 

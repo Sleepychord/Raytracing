@@ -1,7 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include<sstream>
+#include <iostream>
 
 class Color {
 public:
@@ -19,7 +19,7 @@ public:
 	friend Color& operator *= ( Color& , const double& );
 	friend Color& operator /= ( Color& , const double& );
 	void Confine();
-	friend std::stringstream& operator >> (std::stringstream& , const Color&);
+	friend std::istream& operator >> (std::istream& , const Color&);
 };
 
 #endif

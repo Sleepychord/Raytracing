@@ -1,5 +1,5 @@
-#include"color.h"
-#include<sstream>
+#include "color.h"
+#include <iostream>
 
 Color operator + ( const Color& A , const Color& B ) {
 	return Color( A.r + B.r , A.g + B.g , A.b + B.b );
@@ -47,6 +47,6 @@ void Color::Confine() {
 	if ( b > 1 ) b = 1;
 }
 
-std::stringstream& operator >> (std::stringstream& fin, const Color& A){
+std::istream& operator >> (std::istream& fin, const Color& A){
 	return (fin >> A.r >> A.g >> A.b);
 }

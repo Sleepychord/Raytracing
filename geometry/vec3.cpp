@@ -9,8 +9,8 @@ Vec3 Vec3::operator -(const Vec3& b){
 Vec3 Vec3::operator *(const Vec3& b){
     return Vec3(y * b.z - b.y * z, -(x * b.z - b.x * z), x * b.y - b.x * y);
 }//cross
-Vec3 Vec3::operator /(const Vec3& b){
-    return Vec3(x * b.x, y * b.y, z * b.z);
+double Vec3::operator /(const Vec3& b){
+    return x * b.x + y * b.y + z * b.z;
 }
 //dot 
 Vec3 Vec3::operator *(double k){
@@ -19,14 +19,17 @@ Vec3 Vec3::operator *(double k){
 Vec3 Vec3::operator /(double k){
     return Vec3(x / k, y / k, z / k);
 }
+double Vec3::mod2(){
+    return (x * x + y * y + z * z);
+}
 double Vec3::mod(){
     return sqrt(x * x + y * y + z * z);
 }
 Vec3 Vec3::unitize(){
     return (*this) / mod();
 }
-Vec3 Vec3::reflect(const Vec3& n){
-    return (*this) - ((*this) / n * 2) * n;
+Vec3 Vec3::reflect(Vec3& n){
+    return (*this) - n * ((*this) / n * 2);
 }
 Vec3 Vec3::rotate(Vec3 axis, double alpha){
     Vec3 ret;
