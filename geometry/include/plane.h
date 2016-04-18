@@ -1,9 +1,11 @@
+#pragma once
 #include "object.h"
 class Plane : public Object
 {
 public:
+    Plane(){}
     Plane(Vec3 _base, Vec3 _nv):base(_base), normal_vector(_nv){}
-    ~Plane();
+    ~Plane(){}
 
     Vec3 base;
     Vec3 normal_vector;

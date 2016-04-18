@@ -7,7 +7,7 @@
 #include "material.h"
 struct Collider
 {
-    bool is_collided;
+    int collided_num;
     double t;
     Vec3 normal_vector;
 };
@@ -15,11 +15,10 @@ struct Collider
 class  Object
 {
 public:
-     Object();
+     Object():material(NULL){};
      Object(Material* _m):material(_m){}
-    ~ Object();
-
+    virtual ~Object(){delete material;}
     Material* material;
-    virtual Collider collide(const Ray&) = 0; 
+    virtual Collider collide( Ray&) = 0; 
     virtual Color getTexture(const Vec3& pos) = 0;
 };

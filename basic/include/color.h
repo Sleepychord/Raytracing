@@ -2,7 +2,7 @@
 #define COLOR_H
 
 #include <iostream>
-
+#include <cmath>
 class Color {
 public:
 	double r , g , b;
@@ -14,12 +14,15 @@ public:
 	friend Color operator * ( const Color& , const Color& );
 	friend Color operator * ( const Color& , const double& );
 	friend Color operator / ( const Color& , const double& );
+	friend Color operator * ( const double&, const Color&);
+	friend Color operator / ( const double&, const Color&);
 	friend Color& operator += ( Color& , const Color& );
 	friend Color& operator -= ( Color& , const Color& );
 	friend Color& operator *= ( Color& , const double& );
 	friend Color& operator /= ( Color& , const double& );
+	Color Exp();
 	void Confine();
-	friend std::istream& operator >> (std::istream& , const Color&);
+	friend std::istream& operator >> (std::istream& , Color&);
 };
 
 #endif

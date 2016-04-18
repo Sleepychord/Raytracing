@@ -7,8 +7,7 @@ class  Material
 {
 public:
     Material();
-    ~ Material();
-    double reflect_percent, refract_percent, diffuse_percent, refract_index;
+    double reflect_percent, refract_percent, diffuse_percent, refract_index, high_light;
     Color absorb_color;
     Image img;
     friend std::istream& operator >> (std::istream& fin, Material&);

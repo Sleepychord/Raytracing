@@ -26,11 +26,22 @@ double Vec3::mod(){
     return sqrt(x * x + y * y + z * z);
 }
 Vec3 Vec3::unitize(){
-    return (*this) / mod();
+    double t = mod();
+    return (*this) / (t < EPS ? 1 : t);
 }
 Vec3 Vec3::reflect(Vec3& n){
     return (*this) - n * ((*this) / n * 2);
 }
+bool Vec3::refract(Vec3& n, double refract_index, Vec3& output){
+    Vec3 input = this->unitize();
+    double cosI = -(n / input)  , cosT2 = 1 - ( refract_index * refract_index ) * ( 1 - cosI * cosI ); 
+    if ( cosT2 > EPS ) {
+        output = input * refract_index + n * ( refract_index * cosI - sqrt( cosT2 ) );
+        return true;
+    }
+    return false;
+}
+
 Vec3 Vec3::rotate(Vec3 axis, double alpha){
     Vec3 ret;
     double cost = cos( alpha );

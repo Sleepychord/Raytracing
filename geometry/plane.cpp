@@ -4,16 +4,16 @@ Collider Plane::collide(Ray& ray){
     Collider ret;
     double dis_per_t = ray.dir / normal_vector;
     if(fabs(dis_per_t) < EPS){
-        ret.is_collided = false;
+        ret.collided_num = 0;
         return ret;
     }
     double distance = (base - ray.pos) / normal_vector;
     double t = distance / dis_per_t;
     if(t < EPS){
-        ret.is_collided = false;
+        ret.collided_num = 0;
         return ret;
     }else {
-        ret.is_collided = true;
+        ret.collided_num = 1;
         ret.t = t;
         if(dis_per_t < 0)
             ret.normal_vector = normal_vector;

@@ -1,3 +1,4 @@
+#pragma once
 #include "object.h"
 #include <cstring>
 class Sphere : public Object
@@ -6,7 +7,8 @@ public:
     Vec3 o;
     double r;
     Sphere(Vec3 _o, double _r):o(_o), r(_r), Object(NULL){}
-    ~Sphere();
+    Sphere(){}
+    ~Sphere(){}
 
     virtual Collider collide(Ray&);
     virtual Color getTexture(const Vec3& pos);

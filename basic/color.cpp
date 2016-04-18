@@ -21,6 +21,15 @@ Color operator / ( const Color& A , const double& k ) {
 	return Color( A.r / k , A.g / k , A.b / k );
 }
 
+Color operator * (  const double& k, const Color& A ) {
+	return Color( A.r * k , A.g * k , A.b * k );
+}
+
+Color operator / (  const double& k ,const Color& A ) {
+	return Color( A.r / k , A.g / k , A.b / k );
+}
+
+
 Color& operator += ( Color& A , const Color& B ) {
 	A = A + B;
 	return A;
@@ -46,7 +55,9 @@ void Color::Confine() {
 	if ( g > 1 ) g = 1;
 	if ( b > 1 ) b = 1;
 }
-
-std::istream& operator >> (std::istream& fin, const Color& A){
+Color Color::Exp(){
+	return Color(exp(r),exp(g),exp(b));
+}
+std::istream& operator >> (std::istream& fin,  Color& A){
 	return (fin >> A.r >> A.g >> A.b);
 }

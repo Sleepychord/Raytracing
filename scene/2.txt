@@ -1,0 +1,66 @@
+Camera
+    lens -6 2 2
+    center -18 2 2
+    width 0 25 0
+    height 0 0 25 
+    h 1200
+    w 1200
+end
+RectSource
+    vertices 
+        4 3 8
+        4 -1 8
+        8 -1 8
+        8 3 8
+    color 1 1 1
+end
+Plane
+    base 0 0 0
+        normal_vector 0 0 1
+    material
+    reflect_percent 0
+    refract_percent 0
+    diffuse_percent 1
+    refract_index 1.5
+    absorb_color 0 0 0 
+    high_light 0
+    end
+end
+Sphere
+    o 4 4 2
+    r 2
+    material
+        reflect_percent 1
+        refract_percent 0
+        diffuse_percent 0
+        refract_index 1.1
+        absorb_color 0.5 0.5 1 
+        high_light 0
+        img ./resource/marble.bmp
+    end
+end
+Sphere
+    o 4 -2 2
+    r 2
+    material
+        reflect_percent 0
+        refract_percent 1
+        diffuse_percent 0
+        refract_index 1.01
+        absorb_color 0 0 0 
+        high_light 0
+        img ./resource/marble.bmp
+    end
+end
+Plane
+    material
+        reflect_percent 0
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.5
+        absorb_color 1 1 1
+        high_light 0.1
+    end
+    base 12 0 0
+    normal_vector -1 0 0
+end
