@@ -20,5 +20,5 @@ public:
     virtual ~Object(){delete material;}
     Material* material;
     virtual Collider collide( Ray&) = 0; 
-    virtual Color getTexture(const Vec3& pos) = 0;
+    virtual Color getTexture(Vec3& pos) = 0;
 };

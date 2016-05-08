@@ -42,6 +42,11 @@ Collider Sphere::collide(Ray& ray)
     else ret.normal_vector = (ray.pos + ray.dir * t - o).unitize();
     return ret;
 } 
-Color Sphere::getTexture(const Vec3& pos){
-    return Color(0.5, 0.5, 1);//FIXME
+Color Sphere::getTexture(Vec3& pos){
+    if(!material->img.getM())
+        return Color(0.5, 0.5, 1);
+    Vec3 tmp = (pos - o).unitize();
+    double len = acos(tmp / Vec3(0, 0, -1)) * r;
+    return material->img.getColor((PI * r + tmp.x * len),
+        (PI * r + tmp.y * len) );
 }

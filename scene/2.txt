@@ -1,17 +1,17 @@
 Camera
-    lens -6 2 2
-    center -18 2 2
+    lens -5 1 5
+    center -16 1 5
     width 0 25 0
     height 0 0 25 
-    h 1200
-    w 1200
+    h 800
+    w 800
 end
 RectSource
     vertices 
-        4 3 8
-        4 -1 8
-        8 -1 8
-        8 3 8
+        1 3 18
+        1 -5 18
+        4 -5 18
+        4 3 18
     color 1 1 1
 end
 Plane
@@ -24,19 +24,20 @@ Plane
     refract_index 1.5
     absorb_color 0 0 0 
     high_light 0
+    img ./resource/floor.bmp 10 10
     end
 end
 Sphere
     o 4 4 2
     r 2
     material
-        reflect_percent 1
+        reflect_percent 0
         refract_percent 0
-        diffuse_percent 0
+        diffuse_percent 1
         refract_index 1.1
         absorb_color 0.5 0.5 1 
         high_light 0
-        img ./resource/marble.bmp
+        img ./resource/marble.bmp 20 20
     end
 end
 Sphere
@@ -44,12 +45,12 @@ Sphere
     r 2
     material
         reflect_percent 0
-        refract_percent 1
-        diffuse_percent 0
-        refract_index 1.01
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.59
         absorb_color 0 0 0 
         high_light 0
-        img ./resource/marble.bmp
+        img ./resource/marble.bmp 20 20
     end
 end
 Plane

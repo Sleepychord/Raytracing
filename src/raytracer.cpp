@@ -12,12 +12,45 @@ void Raytracer::solve(){
         for(int j = 0;j < scene.camera.film->getM();j++)
         {
             double dist = 0;
-            if(i == 0 && j == 721)
+            if(i == 730 && j == 1000)
                 cerr<<"2"<<endl;
             Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(i, j) );
 
             scene.camera.film->setColor(i,j,calc(sight, 0, dist, false));
         }
+    vector<pair<int, int>> nodes;
+    for(int i = 1;i < scene.camera.film->getN();i++)
+        for(int j = 1;j < scene.camera.film->getM();j++)
+        {
+            Color diff = scene.camera.film->getColor(i,j) - scene.camera.film->getColor(i - 1, j);
+            if(diff.r * diff.r + diff.g * diff.g + diff.b * diff.b > 0.2)
+            {
+                nodes.push_back(make_pair(i,j));
+                nodes.push_back(make_pair(i - 1,j));
+            }
+            diff = scene.camera.film->getColor(i,j) - scene.camera.film->getColor(i, j - 1);
+            if(diff.r * diff.r + diff.g * diff.g + diff.b * diff.b > 0.15)
+            {
+                nodes.push_back(make_pair(i,j));
+                nodes.push_back(make_pair(i, j - 1));
+            }
+        }
+    sort(nodes.begin(), nodes.end());
+    for(int i = 0;i < nodes.size();i++)
+        if(i == 0 || nodes[i] != nodes[i - 1]){
+            const int SAMPLENUM = 4;
+            Color final(0,0,0);
+            for(int u = 0; u < SAMPLENUM; u++)
+                for(int v = 0;v < SAMPLENUM; v++){
+                    double x = nodes[i].first + (u - SAMPLENUM/2.0 + ran()) / SAMPLENUM;
+                    double y = nodes[i].second + (v - SAMPLENUM/2.0 + ran()) / SAMPLENUM;
+                    Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(x, y) );//FIXME
+                    double dist = 0;
+                    final = final + calc(sight, 0, dist, false);
+                }
+            scene.camera.film->setColor(nodes[i].first, nodes[i].second, final / (SAMPLENUM * SAMPLENUM));
+        }
+    
     scene.camera.film-> save("./result/result.jpg");
 }
 Color Raytracer::calc(Ray& ray, int times, double& dist, bool in_refract){

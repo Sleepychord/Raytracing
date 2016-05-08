@@ -17,6 +17,7 @@ std::istream& operator >> (std::istream& fin, Material& m){
             string filename;
             fin >> filename;
             m.img.read(filename);
+            fin >> m.img.h >> m.img.w;
         }
         else {
             cerr<< "read material error, string is "<<tmp<<endl;

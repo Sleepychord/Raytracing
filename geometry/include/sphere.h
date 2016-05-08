@@ -11,6 +11,6 @@ public:
     ~Sphere(){}
 
     virtual Collider collide(Ray&);
-    virtual Color getTexture(const Vec3& pos);
+    virtual Color getTexture(Vec3& pos);
     friend std::istream& operator >>(std::istream& fin, Sphere&);
 };

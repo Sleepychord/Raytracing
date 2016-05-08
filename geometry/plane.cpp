@@ -21,8 +21,12 @@ Collider Plane::collide(Ray& ray){
     }
     return ret;
 }
-Color Plane::getTexture(const Vec3& pos){
-    return Color(1,1,1);//FIXME
+Color Plane::getTexture(Vec3& pos){
+    if(!material->img.getM())
+        return Color(1, 1, 1);
+    Vec3 xaxis = (normal_vector * Vec3(1, 0, 0)).unitize();
+    Vec3 yaxis = (normal_vector * xaxis).unitize();
+    return material->img.getColor((pos - base) / xaxis, (pos - base) / yaxis);
 }
 std::istream& operator >>(std::istream& fin, Plane& p){
     string tmp;
