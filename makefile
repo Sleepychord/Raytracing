@@ -3,7 +3,7 @@ CXXSOURCES += $(shell find . -name "*.cpp")
 CPPFLAGS += -Isrc/include -Ilib/include \
 			-Igeometry/include -Ibasic/include \
 			-lopencv_core -lopencv_highgui \
-			-g -std=c++11
+			-g -std=c++11 -O2
 OBJS = $(addprefix $(BUILD_DIR)/,$(CXXSOURCES:.cpp=.o))
 DEPFILES = $(OBJS:.o=.d)
 $(CXX) = g++-5

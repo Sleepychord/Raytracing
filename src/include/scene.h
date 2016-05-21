@@ -3,8 +3,10 @@
 #include "object.h"
 #include "sphere.h"
 #include "plane.h"
+#include "triangle_set.h"
 #include "point_source.h"
 #include "rect_source.h"
+#include "kdtree_set.h"
 #include <string>
 class  Scene
 {

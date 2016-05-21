@@ -22,7 +22,16 @@ std::istream& operator >> (std::istream& fin, Scene& s){
                 Plane * new_obj = new Plane();
                 fin >> (*new_obj);
                 s.objs.push_back(new_obj);
-            }else{
+            }else if( tmp == "TriangleSet"){
+                TriangleSet * new_obj = new TriangleSet();
+                fin >> (*new_obj);
+                s.objs.push_back(new_obj);
+            }else if(tmp == "KdtreeSet"){
+                TriangleSet * new_obj = new KdtreeSet();
+                fin >> (*new_obj);
+                s.objs.push_back(new_obj);                
+            }
+            else{
                 cerr << "read error in scene, tmp is "<<tmp<<endl;
                 assert(0);
             }

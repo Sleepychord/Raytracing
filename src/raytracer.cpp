@@ -12,18 +12,20 @@ void Raytracer::solve(){
         for(int j = 0;j < scene.camera.film->getM();j++)
         {
             double dist = 0;
-            if(i == 730 && j == 1000)
-                cerr<<"2"<<endl;
+            if(j == 0) cerr<< "solve line "<<i<<endl;
+            if(i == 600 && j == 301) 
+                dist = 0;
             Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(i, j) );
 
             scene.camera.film->setColor(i,j,calc(sight, 0, dist, false));
         }
+        
     vector<pair<int, int>> nodes;
     for(int i = 1;i < scene.camera.film->getN();i++)
         for(int j = 1;j < scene.camera.film->getM();j++)
         {
             Color diff = scene.camera.film->getColor(i,j) - scene.camera.film->getColor(i - 1, j);
-            if(diff.r * diff.r + diff.g * diff.g + diff.b * diff.b > 0.2)
+            if(diff.r * diff.r + diff.g * diff.g + diff.b * diff.b > 0.15)
             {
                 nodes.push_back(make_pair(i,j));
                 nodes.push_back(make_pair(i - 1,j));
@@ -49,6 +51,7 @@ void Raytracer::solve(){
                     final = final + calc(sight, 0, dist, false);
                 }
             scene.camera.film->setColor(nodes[i].first, nodes[i].second, final / (SAMPLENUM * SAMPLENUM));
+        cerr << "optimized "<< i << " / "<< nodes.size()<<endl;
         }
     
     scene.camera.film-> save("./result/result.jpg");
@@ -75,6 +78,7 @@ Color Raytracer::calc(Ray& ray, int times, double& dist, bool in_refract){
             if(!scene.isBlocked(lights[i]))        //shade
             index += abs(c.normal_vector.unitize() / lights[i].dir);
         }
+
         index = obj->material->diffuse_percent * index / lights.size();//diffusion
         index += pow(lights[0].dir / reflect_ray.dir, 50) * obj->material->high_light;//high_light
     }
@@ -98,7 +102,7 @@ Color Raytracer::calc(Ray& ray, int times, double& dist, bool in_refract){
     if(reflect_percent > EPS && times < 10){
         ret += reflect_percent * calc(reflect_ray, times + 1, collide_dist, in_refract)* obj->getTexture(pos);
     }
-
+    ret.Confine();
     dist = c.t;
     return ret ;
 }
