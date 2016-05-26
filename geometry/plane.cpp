@@ -15,9 +15,9 @@ Collider Plane::collide(Ray& ray){
     }else {
         ret.collided_num = 1;
         ret.t = t;
-        if(dis_per_t < 0)
-            ret.normal_vector = normal_vector;
-        else ret.normal_vector = normal_vector * -1;
+        //if(dis_per_t < 0)
+        ret.normal_vector = normal_vector;
+        //else ret.normal_vector = normal_vector * -1;
     }
     return ret;
 }
@@ -37,7 +37,10 @@ std::istream& operator >>(std::istream& fin, Plane& p){
             fin >> (*(p.material));
         }
         else if (tmp == "base") fin >> p.base;
-        else if (tmp == "normal_vector") fin >> p.normal_vector;
+        else if (tmp == "normal_vector") {
+            fin >> p.normal_vector;
+            p.normal_vector = p.normal_vector.unitize();
+        }
         else {
             cerr << "read plane error, string is "<<tmp <<endl;
             assert(0);

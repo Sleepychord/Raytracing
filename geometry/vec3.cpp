@@ -1,38 +1,38 @@
 #include "vec3.h"
 using namespace std;
-Vec3 Vec3::operator +(const Vec3& b){
+Vec3 Vec3::operator +(const Vec3& b)const{
     return Vec3(x + b.x, y + b.y, z + b.z);
 }
-Vec3 Vec3::operator -(const Vec3& b){
+Vec3 Vec3::operator -(const Vec3& b)const{
     return Vec3(x - b.x, y - b.y, z - b.z);    
 }
-Vec3 Vec3::operator *(const Vec3& b){
+Vec3 Vec3::operator *(const Vec3& b)const{
     return Vec3(y * b.z - b.y * z, -(x * b.z - b.x * z), x * b.y - b.x * y);
 }//cross
-double Vec3::operator /(const Vec3& b){
+double Vec3::operator /(const Vec3& b)const{
     return x * b.x + y * b.y + z * b.z;
 }
 //dot 
-Vec3 Vec3::operator *(double k){
+Vec3 Vec3::operator *(double k)const{
     return Vec3(x * k, y * k, z * k);
 }
-Vec3 Vec3::operator /(double k){
+Vec3 Vec3::operator /(double k)const{
     return Vec3(x / k, y / k, z / k);
 }
-double Vec3::mod2(){
+double Vec3::mod2()const{
     return (x * x + y * y + z * z);
 }
-double Vec3::mod(){
+double Vec3::mod()const{
     return sqrt(x * x + y * y + z * z);
 }
-Vec3 Vec3::unitize(){
+Vec3 Vec3::unitize()const{
     double t = mod();
     return (*this) / (t < EPS ? 1 : t);
 }
-Vec3 Vec3::reflect(Vec3& n){
+Vec3 Vec3::reflect(Vec3& n)const{
     return (*this) - n * ((*this) / n * 2);
 }
-bool Vec3::refract(Vec3& n, double refract_index, Vec3& output){
+bool Vec3::refract(Vec3& n, double refract_index, Vec3& output)const{
     Vec3 input = this->unitize();
     double cosI = -(n / input)  , cosT2 = 1 - ( refract_index * refract_index ) * ( 1 - cosI * cosI ); 
     if ( cosT2 > EPS ) {

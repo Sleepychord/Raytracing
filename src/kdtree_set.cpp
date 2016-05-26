@@ -27,12 +27,12 @@ Collider KdtreeSet::search(Node* x, Ray& ray, double t1, double t2){
             double v = (fabs(x2 - x3) > EPS) ? ((x0 - x3) - u * (x1 - x3)) / (x2 - x3) : ((y0 - y3) - u * (y1 - y3)) / (y2 - y3);
             if(u < 0 || v < 0 || 1 - u - v < 0) continue;
             Vec3 nv;
-            nv = normal_v[triangles[i].v0] * u + normal_v[triangles[i].v1] * v + normal_v[triangles[i].v2] * (1 - u - v);
+            nv = (normal_v[triangles[i].v0] * u + normal_v[triangles[i].v1] * v + normal_v[triangles[i].v2] * (1 - u - v)).unitize();
             ret.collided_num = 1;
             ret.t = t;
-            if(dis_per_t < 0)
-                ret.normal_vector = nv;
-            else ret.normal_vector = nv * -1;
+            //if(dis_per_t < 0)
+            ret.normal_vector = nv;
+            //else ret.normal_vector = nv * -1;
         }
         return ret;
     }else{

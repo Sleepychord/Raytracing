@@ -10,5 +10,6 @@ public:
     Vec3 pos;
     virtual std::vector<Ray> getLights(Vec3 aim);
     virtual Collider collide(Ray &);
+    virtual Ray getPhoton(int roundnum);
     friend std::istream& operator >> (std::istream& fin, PointSource& p);
 };

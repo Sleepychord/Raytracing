@@ -37,9 +37,10 @@ Collider Sphere::collide(Ray& ray)
     if(t2 > EPS  && t2 < t) t = t2;
     ret.collided_num = 1;
     ret.t = t;
-    if((ray.pos - o).mod2() < r * r + EPS)// in the sphere 
-        ret.normal_vector = (o - ray.pos - ray.dir * t ).unitize(); 
-    else ret.normal_vector = (ray.pos + ray.dir * t - o).unitize();
+    // if((ray.pos - o).mod2() < r * r + EPS)// in the sphere 
+    //     ret.normal_vector = (o - ray.pos - ray.dir * t ).unitize(); 
+    // else 
+        ret.normal_vector = (ray.pos + ray.dir * t - o).unitize();
     return ret;
 } 
 Color Sphere::getTexture(Vec3& pos){

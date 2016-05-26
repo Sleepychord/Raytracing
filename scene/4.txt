@@ -28,7 +28,7 @@ Plane
     end
 end
 KdtreeSet
-    obj ./resource/fixed.perfect.dragon.100K.0.07.obj 10 0 2 0.1
+    obj ./resource/dinosaur.2k.obj 10 0 2 0.1
     material
         reflect_percent 0
         refract_percent 0

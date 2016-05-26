@@ -61,3 +61,4 @@ Color Color::Exp(){
 std::istream& operator >> (std::istream& fin,  Color& A){
 	return (fin >> A.r >> A.g >> A.b);
 }
+

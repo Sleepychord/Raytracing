@@ -68,6 +68,7 @@ Color Raytracer::calc(Ray& ray, int times, double& dist, bool in_refract){
     if(!c.collided_num) return ans;
     double collide_dist = 1e10;
     // if collider found  
+    if(c.normal_vector / ray.dir > 0) c.normal_vector = c.normal_vector * -1;
     double index = 0;
     Vec3 pos = ray.pos + ray.dir * c.t;
     Ray reflect_ray(pos, ray.dir.reflect(c.normal_vector));

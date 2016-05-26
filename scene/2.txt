@@ -1,6 +1,6 @@
 Camera
-    lens -5 1 5
-    center -16 1 5
+    lens -5 1 2
+    center -16 1 2
     width 0 25 0
     height 0 0 25 
     h 800
@@ -31,13 +31,12 @@ Sphere
     o 4 4 2
     r 2
     material
-        reflect_percent 0
+        reflect_percent 1
         refract_percent 0
-        diffuse_percent 1
+        diffuse_percent 0
         refract_index 1.1
         absorb_color 0.5 0.5 1 
         high_light 0
-        img ./resource/marble.bmp 20 20
     end
 end
 Sphere
@@ -45,12 +44,11 @@ Sphere
     r 2
     material
         reflect_percent 0
-        refract_percent 0
-        diffuse_percent 1
+        refract_percent 0.9
+        diffuse_percent 0
         refract_index 1.59
         absorb_color 0 0 0 
         high_light 0
-        img ./resource/marble.bmp 20 20
     end
 end
 Plane
