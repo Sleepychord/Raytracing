@@ -82,7 +82,7 @@ void PhotonMapper::solve(){
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
         for(int i = 0;i < photon_num;i++){
-            int seed = rd * photon_num + i;
+            int seed = rd * photon_num + i + 1000;
             photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
             //cout << "emit a photon"<<endl;
         }
