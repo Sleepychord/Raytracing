@@ -18,7 +18,7 @@ Collider PointSource::collide(Ray & ray){
     }
 }
 
-Ray PointSource::getPhoton(int i){
+Ray PointSource::getPhoton(long long i){
     double p = 2. * PI * hal(0, i), t = 2. * acos(sqrt(1.-hal(1, i)));
         double st = sin(t);
     return Ray(pos, Vec3(cos(p) * st, cos(t), sin(p) * st));

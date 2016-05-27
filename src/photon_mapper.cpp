@@ -76,13 +76,14 @@ void PhotonMapper::solve(){
         for(int j = 0;j < scene.camera.film->getM();j++)
             directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
-    const int rounds = 2000, photon_num = 3000000;
+    const int rounds = 100000, photon_num = 3000000;
     double source_energy = 2400;
     double r = 0.1;
+    long long seed = 1000;
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
         for(int i = 0;i < photon_num;i++){
-            int seed = rd * photon_num + i + 1000;
+            seed ++;
             photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
             //cout << "emit a photon"<<endl;
         }
@@ -108,7 +109,7 @@ void PhotonMapper::solve(){
     }
 }
 
-void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color phi, double r, int d3, int seed){
+void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color phi, double r, int d3, long long seed){
     Collider c;
     Object * obj = scene.firstObject(ray, c);
     if(!c.collided_num) return;

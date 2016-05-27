@@ -14,7 +14,7 @@ const int primes[61]={
 inline int rev(const int i,const int p) {
   if (i==0) return i; else return p-i;
 }
-inline double hal(const int b, int j) {
+inline double hal(const int b, long long j) {
   const int p = primes[b]; 
   double h = 0.0, f = 1.0 / (double)p, fct = f;
   while (j > 0) {
