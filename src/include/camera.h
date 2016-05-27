@@ -1,7 +1,8 @@
+#pragma once
 #include "vec3.h"
 #include "color.h"
 #include "image.h"
-#include "Plane.h"
+#include "plane.h"
 #include <vector>
 class Camera
 {
