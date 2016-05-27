@@ -31,8 +31,8 @@ Collider RectSource::collide(Ray & ray){
 }
 
 Ray RectSource::getPhoton(int i){
-    double p = 2. * PI * hal(0, i), t = 2. * acos(sqrt(1.-hal(1, i)));
-    Vec3 pos = (vertices[3] - vertices[0]) * hal(2, i) + (vertices[1] - vertices[0]) * hal(3, i) + vertices[0];
+    double p = 2. * PI * hal(2, i), t = 2. * acos(sqrt(1.-hal(3, i)));
+    Vec3 pos = (vertices[3] - vertices[0]) * hal(0, i) + (vertices[1] - vertices[0]) * hal(1, i) + vertices[0];
     double st = sin(t);
     return Ray(pos, Vec3(cos(p) * st, cos(t), sin(p) * st));
 }

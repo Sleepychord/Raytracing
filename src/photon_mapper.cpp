@@ -1,6 +1,6 @@
 #include "photon_mapper.h"
 using namespace std;
-const double beer_const = 0.1;
+const double beer_const = 1;
 PhotonMapper::PhotonMapper(std::string filename)
 {
     ifstream fin(filename.c_str());
@@ -16,6 +16,12 @@ void PhotonMapper::buildHitMap(){
                 dist = 0;
             Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(i, j) );
             calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
+            // const int SAMPLENUM = 16;
+            // std::vector<Vec3> sp = scene.camera.getSamplePoints(i, j, SAMPLENUM);
+            // for(auto& p: sp){
+            //     Ray sight = Ray(scene.camera.lens, scene.camera.lens - p );
+            //     calc(sight, 0, Color(0, 0, 0), i, j, Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM));
+            // }
         }
     hitmap.build();
 }
@@ -70,8 +76,9 @@ void PhotonMapper::solve(){
         for(int j = 0;j < scene.camera.film->getM();j++)
             directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
-    const int rounds = 2, photon_num = 100000;
-    double r = 1;
+    const int rounds = 2000, photon_num = 3000000;
+    double source_energy = 2400;
+    double r = 0.1;
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
         for(int i = 0;i < photon_num;i++){
@@ -83,7 +90,6 @@ void PhotonMapper::solve(){
             for(int j = 0;j < scene.camera.film->getM();j++){
                 colormap[i][j] = colormap[i][j] * rd / (rd + 1);
             }
-        double source_energy = 1000;
         for(auto & h: hitmap.points){
             colormap[h.imgx][h.imgy] += h.sum  * h.weight * source_energy / (r * r * photon_num * (rd + 1));
             //cerr << h.sum.r <<" "<<h.sum.g << " "<<h.sum.b <<endl;

@@ -24,4 +24,11 @@ Vec3 Camera::getPoint(double x, double y){
     return ret; 
 }
 
+std::vector<Vec3> Camera::getSamplePoints(double x, double y, int num){
+    vector<Vec3> ret;
+    for(int i = 0;i < num;i++)
+        ret.push_back(center + height * ((x + ran() - 0.5) / h - 0.5) + width * ((y + ran() - 0.5) / w - 0.5)) ;
+    return ret;
+}
+
  
