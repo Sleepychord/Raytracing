@@ -43,7 +43,7 @@ bool Vec3::refract(Vec3& n, double refract_index, Vec3& output)const{
 }
 
 Vec3 Vec3::rotate(Vec3 axis, double alpha){
-    Vec3 ret;
+    Vec3 ret(0,0,0);
     double cost = cos( alpha );
     double sint = sin( alpha );
     ret.x += x * ( axis.x * axis.x + ( 1 - axis.x * axis.x ) * cost );

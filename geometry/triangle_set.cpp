@@ -23,8 +23,9 @@ Collider TriangleSet::collide(Ray& ray){
 }
 
 Color TriangleSet::getTexture(Vec3& pos){
-    //if(!material->img.getM())
-        return Color(0.66, 0.81, 0.33);
+    if(!material->img.getM())
+        return Color(1, 1, 1);
+    else return Color(0.66, 0.81, 0.33);
 }
 std::istream& operator >>(std::istream& fin, TriangleSet& s)
 {
@@ -37,9 +38,10 @@ std::istream& operator >>(std::istream& fin, TriangleSet& s)
         }
         else if (tmp == "obj"){
             string filename, t;
-            Vec3 pos;
-            double p;
-            fin >> filename >> pos >> p;
+            Vec3 pos, axis;
+            double p, angel;
+            fin >> filename >> pos >> p >> axis >>angel;
+            angel = angel * PI / 180.0;
             ifstream resource(filename);
             cerr<< "reading obj"<<endl;
                 while(1){
@@ -51,7 +53,7 @@ std::istream& operator >>(std::istream& fin, TriangleSet& s)
                     if(t == "v")
                     {                    
                         resource >> vertex;
-                        vertex = vertex * p + pos;
+                        vertex = (vertex * p).rotate(axis, angel) + pos;
                         s.vertices.push_back(vertex);
                     }                    
                     else {

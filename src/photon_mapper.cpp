@@ -85,7 +85,8 @@ void PhotonMapper::solve(){
         for(int i = 0;i < photon_num;i++){
             seed ++;
             photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
-            //cout << "emit a photon"<<endl;
+            if(i % 10000 == 0)
+            cout << "emit a photon: "<<i <<" / " <<photon_num<<endl;
         }
         for(int i = 0;i < scene.camera.film->getN();i++)
             for(int j = 0;j < scene.camera.film->getM();j++){

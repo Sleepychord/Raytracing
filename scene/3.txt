@@ -6,12 +6,8 @@ Camera
     h 768
     w 1280
 end
-RectSource
-    vertices 
-        -1 4 6
-        -1 -1 6
-        0 -1 6
-        0 4 6
+PointSource
+    pos 0 3 6
     color 2 2 2
 end
 Sphere
@@ -89,13 +85,13 @@ Plane
     end
 end
 KdtreeSet
-    obj ./resource/dinosaur.2k.obj -0.4 7.7 -1 0.02
+    obj ./resource/dragon.obj -0.4 7.7 -1 1 1 0 0 90
     material
-        reflect_percent 0
-        refract_percent 0
-        diffuse_percent 1
-        refract_index 1.5
-        absorb_color 1 1 1
+        reflect_percent 0.1
+        refract_percent 0.8
+        diffuse_percent 0
+        refract_index 1.7
+        absorb_color 1 0.2 1
         high_light 0.1
     end
 end

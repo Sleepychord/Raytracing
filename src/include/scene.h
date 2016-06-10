@@ -8,6 +8,7 @@
 #include "rect_source.h"
 #include "kdtree_set.h"
 #include <string>
+#include "tiny_obj_loader.h"
 class  Scene
 {
 public:
@@ -24,4 +25,5 @@ public:
     friend std::istream& operator >> (std::istream& fin, Scene& s);
     virtual Object* firstObject(Ray, Collider&);
     virtual bool isBlocked(Ray);
+    void readFromObj(std::string inputfile);
 };
