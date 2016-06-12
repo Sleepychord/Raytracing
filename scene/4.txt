@@ -1,49 +1,88 @@
 Camera
-    lens 0 1 4
-    center -11 1 4
-    width 0 25 0
-    height 0 0 25 
-    h 400
-    w 400
+    lens -5.5 6.8 4
+    center -6.5 6.8 5
+    height 0.77
+    width 1.28
+    h 768
+    w 1280
 end
 PointSource
-    pos 5 0 6
-    color 1 1 1
+    pos 0 3 4
+    color 2 2 2
 end
+Sphere
+    o -0.5 5.14 -1.8
+    r 0.2
+    material
+        reflect_percent 0
+        refract_percent 1
+        diffuse_percent 0
+        refract_index 1.7
+        absorb_color 1 0 0 
+    end
+end
+
+Sphere
+    o 0 5 -1.8
+    r 0.2
+    material
+        reflect_percent 0
+        refract_percent 1
+        diffuse_percent 0
+        refract_index 1.7
+        absorb_color 0 1 0
+    end
+end
+
+Sphere
+    o 0.5 5.14 -1.8
+    r 0.2
+    material
+        reflect_percent 0
+        refract_percent 1
+        diffuse_percent 0
+        refract_index 1.7
+        absorb_color 0 0 1
+    end
+end
+
+Sphere
+    o 1.5 6.3 -1.6
+    r 0.4
+    material
+        reflect_percent 0.8
+        refract_percent 0
+        diffuse_percent 0
+        refract_index 1.1
+        absorb_color 0.5 0.5 1 
+        high_light 0.2
+    end
+end
+
+Sphere
+    o 0 6 -1.5
+    r 0.5
+    material
+        reflect_percent 0.3
+        refract_percent 0
+        diffuse_percent 0.45
+        refract_index 1.1
+        absorb_color 0.5 0.5 1 
+        high_light 0.25
+        img ./resource/marble.bmp 1 1
+    end
+end
+
 Plane
-    base 0 0 -4
+    base 0 0 -2
         normal_vector 0 0 1
     material
-    reflect_percent 0
+    reflect_percent 0.7
     refract_percent 0
-    diffuse_percent 1
+    diffuse_percent 0.3
     refract_index 1.5
-    absorb_color 0 0 0 
-    high_light 0
-    img ./resource/floor.bmp 10 10
+    img ./resource/floor.bmp 5 5
     end
 end
-KdtreeSet
-    obj ./resource/dragon.obj 8 0 2 5 1 0 0 90
-    material
-        reflect_percent 0
-        refract_percent 0
-        diffuse_percent 1
-        refract_index 1.5
-        absorb_color 1 1 1
-        high_light 0.1
-    end
-end
-Plane
-    material
-        reflect_percent 0
-        refract_percent 0
-        diffuse_percent 1
-        refract_index 1.5
-        absorb_color 1 1 1
-        high_light 0.1
-    end
-    base 16 0 0
-    normal_vector -1 0 0
-end
-Obj ./resource/cube/cube.obj
+
+Obj ./resource/plant/D_Plant.obj 0.02 -0.5 7.7 -1.5 0 0 0

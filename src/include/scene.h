@@ -25,5 +25,5 @@ public:
     friend std::istream& operator >> (std::istream& fin, Scene& s);
     virtual Object* firstObject(Ray, Collider&);
     virtual bool isBlocked(Ray);
-    void readFromObj(std::string inputfile);
+    void readFromObj(std::string inputfile, double , Vec3, Vec3);
 };

@@ -19,12 +19,13 @@ Collider Plane::collide(Ray& ray){
         ret.normal_vector = normal_vector;
         //else ret.normal_vector = normal_vector * -1;
     }
+    ret.m = material;
     return ret;
 }
-Color Plane::getTexture(Vec3& pos){
+Color Plane::getTexture(Vec3& pos, int trinum ){
     if(!material->img.getM())
         return Color(1, 1, 1);
-    Vec3 xaxis = (normal_vector * Vec3(1, 0, 0)).unitize();
+    Vec3 xaxis = (normal_vector * Vec3(0, 1, 1)).unitize();
     Vec3 yaxis = (normal_vector * xaxis).unitize();
     return material->img.getColor((pos - base) / xaxis, (pos - base) / yaxis);
 }

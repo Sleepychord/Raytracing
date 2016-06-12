@@ -41,9 +41,10 @@ Collider Sphere::collide(Ray& ray)
     //     ret.normal_vector = (o - ray.pos - ray.dir * t ).unitize(); 
     // else 
         ret.normal_vector = (ray.pos + ray.dir * t - o).unitize();
+        ret.m = material;
     return ret;
 } 
-Color Sphere::getTexture(Vec3& pos){
+Color Sphere::getTexture(Vec3& pos, int trinum ){
     if(!material->img.getM())
         return Color(0.5, 0.5, 1);
     Vec3 tmp = (pos - o).unitize();

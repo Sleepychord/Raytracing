@@ -33,7 +33,10 @@ std::istream& operator >> (std::istream& fin, Scene& s){
             }else if(tmp == "Obj"){
                 string inputfile;
                 fin >> inputfile;
-                s.readFromObj(inputfile);
+                double b;
+                Vec3 dpos, angle;
+                fin >> b >> dpos >> angle;
+                s.readFromObj(inputfile, b, dpos, angle);
             }
             else{
                 cerr << "read error in scene, tmp is "<<tmp<<endl;
@@ -65,7 +68,8 @@ bool Scene::isBlocked(Ray ray){
     return false;
 }
 
-void Scene::readFromObj(std::string inputfile){
+void Scene::readFromObj(std::string inputfile, double b, Vec3 dpos, Vec3 angle){
+
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
       
@@ -82,47 +86,56 @@ void Scene::readFromObj(std::string inputfile){
 
     std::cout << "# of shapes    : " << shapes.size() << std::endl;
     std::cout << "# of materials : " << materials.size() << std::endl;
-      
+    
+    std::vector<Material*> ms;
+    for (size_t i = 0; i < materials.size(); i++) {
+      Material * tmp = new Material();
+      tmp->reflect_percent = 1 - materials[i].specular[0];
+      tmp->refract_percent = 1 - materials[i].dissolve;
+      tmp->diffuse_percent = 1 - tmp->refract_percent - tmp->reflect_percent;
+      tmp->color = Color(materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
+      tmp->refract_index = materials[i].ior;
+      if(materials[i].diffuse_texname != ""){
+        tmp->img.read(materials[i].diffuse_texname);
+        tmp->img.h = tmp->img.w = 1;
+      }
+      ms.push_back(tmp);
+
+    }
+  
     for (size_t i = 0; i < shapes.size(); i++) {
+      KdtreeSet* tmp = new KdtreeSet();
       printf("shape[%ld].name = %s\n", i, shapes[i].name.c_str());
       printf("Size of shape[%ld].indices: %ld\n", i, shapes[i].mesh.indices.size());
       printf("Size of shape[%ld].material_ids: %ld\n", i, shapes[i].mesh.material_ids.size());
       assert((shapes[i].mesh.indices.size() % 3) == 0);
       for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
-        printf("  idx[%ld] = %d, %d, %d. mat_id = %d\n", f, shapes[i].mesh.indices[3*f+0], shapes[i].mesh.indices[3*f+1], shapes[i].mesh.indices[3*f+2], shapes[i].mesh.material_ids[f]);
+        Triangle tri;
+        tri.v0 = shapes[i].mesh.indices[3*f+0];
+        tri.v1 = shapes[i].mesh.indices[3*f+1];
+        tri.v2 = shapes[i].mesh.indices[3*f+2];
+        tri.m = ms[shapes[i].mesh.material_ids[f]];
+        tmp->triangles.push_back(tri);
       }
 
       printf("shape[%ld].vertices: %ld\n", i, shapes[i].mesh.positions.size());
+      cerr<<shapes[i].mesh.positions.size() / 3<<" vs "<<shapes[i].mesh.texcoords.size() / 2<<endl;
       assert((shapes[i].mesh.positions.size() % 3) == 0);
       for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-        printf("  v[%ld] = (%f, %f, %f)\n", v,
-          shapes[i].mesh.positions[3*v+0],
-          shapes[i].mesh.positions[3*v+1],
-          shapes[i].mesh.positions[3*v+2]);
+        Vec3 tt = Vec3(shapes[i].mesh.positions[3*v+0], shapes[i].mesh.positions[3*v+1], shapes[i].mesh.positions[3*v+2]);
+        tt = tt.rotate(Vec3(1,0,0), angle.x/ 180.0 * PI);
+        tt = tt.rotate(Vec3(0,1,0), angle.y/ 180.0 * PI);
+        tt = tt.rotate(Vec3(0,0,1), angle.z/ 180.0 * PI);
+
+        tmp->vertices.push_back(tt * b + dpos);
+        if(shapes[i].mesh.texcoords.size() > 2 * v ){
+            tmp->imgy.push_back(shapes[i].mesh.texcoords[2 * v]);
+            tmp->imgx.push_back(shapes[i].mesh.texcoords[2 * v + 1]);
+        }
       }
+      tmp->build();
+      objs.push_back(tmp);
     }
 
-    for (size_t i = 0; i < materials.size(); i++) {
-      printf("material[%ld].name = %s\n", i, materials[i].name.c_str());
-      printf("  material.Ka = (%f, %f ,%f)\n", materials[i].ambient[0], materials[i].ambient[1], materials[i].ambient[2]);
-      printf("  material.Kd = (%f, %f ,%f)\n", materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
-      printf("  material.Ks = (%f, %f ,%f)\n", materials[i].specular[0], materials[i].specular[1], materials[i].specular[2]);
-      printf("  material.Tr = (%f, %f ,%f)\n", materials[i].transmittance[0], materials[i].transmittance[1], materials[i].transmittance[2]);
-      printf("  material.Ke = (%f, %f ,%f)\n", materials[i].emission[0], materials[i].emission[1], materials[i].emission[2]);
-      printf("  material.Ns = %f\n", materials[i].shininess);
-      printf("  material.Ni = %f\n", materials[i].ior);
-      printf("  material.dissolve = %f\n", materials[i].dissolve);
-      printf("  material.illum = %d\n", materials[i].illum);
-      printf("  material.map_Ka = %s\n", materials[i].ambient_texname.c_str());
-      printf("  material.map_Kd = %s\n", materials[i].diffuse_texname.c_str());
-      printf("  material.map_Ks = %s\n", materials[i].specular_texname.c_str());
-      printf("  material.map_Ns = %s\n", materials[i].specular_highlight_texname.c_str());
-      std::map<std::string, std::string>::const_iterator it(materials[i].unknown_parameter.begin());
-      std::map<std::string, std::string>::const_iterator itEnd(materials[i].unknown_parameter.end());
-      for (; it != itEnd; it++) {
-        printf("  material.%s = %s\n", it->first.c_str(), it->second.c_str());
-      }
-      printf("\n");
-    }
-
+ 
 }

@@ -25,14 +25,16 @@ Collider KdtreeSet::search(Node* x, Ray& ray, double t1, double t2){
                     y1 = vertices[triangles[i].v0].z, y2 = vertices[triangles[i].v1].z, y3 = vertices[triangles[i].v2].z, y0 = v0.z;
             double u = ((x0 - x3)*(y2 - y3) - (y0 - y3)*(x2 - x3)) / ((x1 - x3)*(y2 - y3) - (y1 - y3)*(x2 - x3));
             double v = (fabs(x2 - x3) > EPS) ? ((x0 - x3) - u * (x1 - x3)) / (x2 - x3) : ((y0 - y3) - u * (y1 - y3)) / (y2 - y3);
+            assert(u == u && v == v && fabs(u) < INF && fabs(v) < INF);
             if(u < 0 || v < 0 || 1 - u - v < 0) continue;
             Vec3 nv;
             nv = (normal_v[triangles[i].v0] * u + normal_v[triangles[i].v1] * v + normal_v[triangles[i].v2] * (1 - u - v)).unitize();
-            ret.collided_num = 1;
+            ret.collided_num = i + 1;
             ret.t = t;
-            //if(dis_per_t < 0)
             ret.normal_vector = nv;
-            //else ret.normal_vector = nv * -1;
+            if(triangles[i].m != NULL)
+                ret.m = triangles[i].m;
+            else ret.m = material;
         }
         return ret;
     }else{
@@ -95,7 +97,7 @@ Collider KdtreeSet::collide(Ray& ray){
         if(t1 > mint) mint = t1;
         if(t2 < maxt) maxt = t2;
     }
-    if(mint >= maxt) return ret;
+    if(mint - EPS > maxt) return ret;
     return search(root, ray, mint, maxt);
 }
 void KdtreeSet::build(){

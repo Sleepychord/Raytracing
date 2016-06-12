@@ -18,14 +18,33 @@ Collider TriangleSet::collide(Ray& ray){
         if(dis_per_t < 0)
             ret.normal_vector = normal_vector[i];
         else ret.normal_vector = normal_vector[i] * -1;
+        ret.m = triangles[i].m;
     }
     return ret;
 }
 
-Color TriangleSet::getTexture(Vec3& pos){
-    if(!material->img.getM())
-        return Color(1, 1, 1);
-    else return Color(0.66, 0.81, 0.33);
+Color TriangleSet::getTexture(Vec3& v0, int i){
+    if(triangles[i].m == NULL)
+        return material->color;
+    else
+    if(triangles[i].m->img.getM()){
+            double x0 = v0.x, y0 = v0.y;
+            double x1 = vertices[triangles[i].v0].x, y1 = vertices[triangles[i].v0].y;
+            double x2 = vertices[triangles[i].v1].x, y2 = vertices[triangles[i].v1].y;
+            double x3 = vertices[triangles[i].v2].x, y3 = vertices[triangles[i].v2].y;
+            if(fabs(normal_vector[i].x) > fabs(normal_vector[i].y)){
+                if(fabs(normal_vector[i].x) > fabs(normal_vector[i].z)) 
+                    x1 = vertices[triangles[i].v0].z, x2 = vertices[triangles[i].v1].z, x3 = vertices[triangles[i].v2].z, x0 = v0.z;
+            }else if(fabs(normal_vector[i].y) > fabs(normal_vector[i].z))
+                    y1 = vertices[triangles[i].v0].z, y2 = vertices[triangles[i].v1].z, y3 = vertices[triangles[i].v2].z, y0 = v0.z;
+            double u = ((x0 - x3)*(y2 - y3) - (y0 - y3)*(x2 - x3)) / ((x1 - x3)*(y2 - y3) - (y1 - y3)*(x2 - x3));
+            double v = (fabs(x2 - x3) > EPS) ? ((x0 - x3) - u * (x1 - x3)) / (x2 - x3) : ((y0 - y3) - u * (y1 - y3)) / (y2 - y3);
+            assert(!(u < 0 || v < 0 || 1 - u - v < 0));
+            double xx = (imgx[triangles[i].v0] * u + imgx[triangles[i].v1] * v + imgx[triangles[i].v2] * (1 - u - v)),
+                   yy = (imgy[triangles[i].v0] * u + imgy[triangles[i].v1] * v + imgy[triangles[i].v2] * (1 - u - v));
+        return triangles[i].m->img.getColor(xx, yy);
+    }
+    else return triangles[i].m->color;
 }
 std::istream& operator >>(std::istream& fin, TriangleSet& s)
 {

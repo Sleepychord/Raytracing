@@ -1,13 +1,13 @@
 Camera
     lens -5.5 6.8 4
     center -6.5 6.8 5
-    height 0.42 0 0.42
-    width 0 1 0 
+    height 0.77
+    width 1.28
     h 768
     w 1280
 end
 PointSource
-    pos 0 3 6
+    pos 0 3 4
     color 2 2 2
 end
 Sphere
@@ -84,6 +84,7 @@ Plane
     img ./resource/floor.bmp 5 5
     end
 end
+
 KdtreeSet
     obj ./resource/dragon.obj -0.4 7.7 -1 1 1 0 0 90
     material
@@ -91,6 +92,7 @@ KdtreeSet
         refract_percent 0.8
         diffuse_percent 0
         refract_index 1.7
+        color 0.5 0.5 0.5
         absorb_color 1 0.2 1
         high_light 0.1
     end

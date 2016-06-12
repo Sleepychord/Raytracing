@@ -8,6 +8,10 @@ struct Node
     double split;
     int dimension;
     Node():l(NULL),r(NULL){}
+    ~Node(){
+        delete l;
+        delete r;
+    }
 };
 struct AABB
 {

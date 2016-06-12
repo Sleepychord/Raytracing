@@ -12,16 +12,16 @@ void PhotonMapper::buildHitMap(){
         {
             double dist = 0;
             if(j == 0) cerr<< "solve line "<<i<<endl;
-            if(i == 600 && j == 301) 
+            if(i == 346 && j == 141) 
                 dist = 0;
-            Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(i, j) );
-            calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
-            // const int SAMPLENUM = 16;
-            // std::vector<Vec3> sp = scene.camera.getSamplePoints(i, j, SAMPLENUM);
-            // for(auto& p: sp){
-            //     Ray sight = Ray(scene.camera.lens, scene.camera.lens - p );
-            //     calc(sight, 0, Color(0, 0, 0), i, j, Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM));
-            // }
+            // Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(i, j) );
+            // calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
+            const int SAMPLENUM = 4;
+            std::vector<Vec3> sp = scene.camera.getSamplePoints(i, j, SAMPLENUM);
+            for(auto& p: sp){
+                Ray sight = Ray(scene.camera.lens, scene.camera.lens - p );
+                calc(sight, 0, Color(0, 0, 0), i, j, Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM));
+            }
         }
     hitmap.build();
 }
@@ -41,9 +41,9 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
     Vec3 normal_vector = from_out? c.normal_vector: c.normal_vector * -1;//real normal_vector
     weight = weight * (absorbing * (-beer_const) * (ray.pos - pos).mod()).Exp();
     Ray reflect_ray(pos, ray.dir.reflect(normal_vector));
-    if(obj->material-> diffuse_percent > EPS){
+    if(c.m-> diffuse_percent > EPS){
         HitPoint e;
-        e.weight = weight * obj->material->diffuse_percent * obj->getTexture(pos);
+        e.weight = weight * c.m->diffuse_percent * obj->getTexture(pos, c.collided_num - 1);
         e.pos = pos;
         e.normal_vector = normal_vector;
         e.in_vector = ray.dir;
@@ -52,19 +52,19 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
         hitmap.points.push_back(e);
     }
     // refraction
-    double reflect_percent = obj->material->reflect_percent;
-    if(obj->material->refract_percent > EPS && times < 10){
+    double reflect_percent = c.m->reflect_percent;
+    if(c.m->refract_percent > EPS && times < 6){
         Ray refract_ray(pos,Vec3(0,0,0));
-        double next_ri = from_out? 1.0/obj->material->refract_index: obj->material->refract_index;
+        double next_ri = from_out? 1.0/c.m->refract_index: c.m->refract_index;
         if(ray.dir.refract(normal_vector, next_ri, refract_ray.dir)){
-            calc(refract_ray, times + 1, from_out?obj->material->absorb_color: Color(0, 0, 0), xx, yy, weight * obj->material->refract_percent);
+            calc(refract_ray, times + 1, from_out?c.m->absorb_color: Color(0, 0, 0), xx, yy, weight * c.m->refract_percent);
             //FIXME
         }
-        else reflect_percent += obj->material->refract_percent;
+        else reflect_percent += c.m->refract_percent;
     }
     // reflection
     if(reflect_percent > EPS && times < 10){
-        calc(reflect_ray, times + 1, absorbing, xx, yy, weight * reflect_percent * obj->getTexture(pos));
+        calc(reflect_ray, times + 1, absorbing, xx, yy, weight * reflect_percent * obj->getTexture(pos, c.collided_num - 1));
     }
 }
 
@@ -77,11 +77,17 @@ void PhotonMapper::solve(){
             directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
     const int rounds = 100000, photon_num = 3000000;
-    double source_energy = 2400;
+    double source_energy = 1000;
     double r = 0.1;
     long long seed = 1000;
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
+        if(rd % 5 == 1) {
+            hitmap.points.clear();
+            delete hitmap.root;
+            hitmap.root = NULL;
+            buildHitMap();
+        }
         for(int i = 0;i < photon_num;i++){
             seed ++;
             photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
@@ -119,13 +125,15 @@ void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color
     Vec3 normal_vector = from_out? c.normal_vector: c.normal_vector * -1;//real normal_vector 
     phi = phi * (absorbing * (-beer_const) * (ray.pos - pos).mod()).Exp();// beer
     double p = hal(d3, seed);
-    if(p < obj->material->diffuse_percent){
+    if(p < c.m->diffuse_percent){
         hitmap.update(hitmap.root, pos, phi, ray.dir, r);
         if(times < 10){
-            phi = phi * obj->getTexture(pos);
-            if(phi.r > phi.g && phi.r > phi.b){double t = 1.0 / phi.r; phi = phi * t;}
-            else if(phi.g > phi.r && phi.g > phi.b){double t = 1.0 / phi.g; phi = phi * t;}
-            else {double t = 1.0 / phi.b; phi = phi * t;}
+            phi = phi * obj->getTexture(pos, c.collided_num - 1);
+            double t;
+            if(phi.r > phi.g && phi.r > phi.b){t = 1.0 / phi.r; phi = phi * t;}
+            else if(phi.g > phi.r && phi.g > phi.b){t = 1.0 / phi.g; phi = phi * t;}
+            else {t = 1.0 / phi.b; phi = phi * t;}
+            if(fabs(t) > INF) return;
             //-----------------
             double r1 = 2. * PI * hal(d3 + 1, seed), r2 = hal(d3 + 2, seed);
             double r2s = sqrt(r2);
@@ -133,30 +141,32 @@ void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color
             Vec3 v = w * u, d = (u * cos(r1) * r2s + v * sin(r1) * r2s + w * sqrt(1-r2)).unitize();
             photonTrace(Ray(pos, d), times + 1, absorbing, phi, r, d3 + 3, seed);
         }
-    }else if (p < obj->material->diffuse_percent + obj->material->refract_percent){
-        if(times < 10){
+    }else if (p < c.m->diffuse_percent + c.m->refract_percent){
+        if(times < 6){
             Ray refract_ray(pos,Vec3(0,0,0));
-            double next_ri = from_out? 1.0/obj->material->refract_index: obj->material->refract_index;
+            double next_ri = from_out? 1.0/c.m->refract_index: c.m->refract_index;
             if(ray.dir.refract(normal_vector, next_ri, refract_ray.dir))
-                photonTrace(refract_ray, times + 1, from_out?obj->material->absorb_color: Color(0, 0, 0), phi, r, d3 + 3, seed);
+                photonTrace(refract_ray, times + 1, from_out?c.m->absorb_color: Color(0, 0, 0), phi, r, d3 + 3, seed);
             else
             {    
                 Ray reflect_ray(pos, ray.dir.reflect(normal_vector));
-                phi = phi * obj->getTexture(pos);
-                if(phi.r > phi.g && phi.r > phi.b){double t = 1.0 / phi.r; phi = phi * t;}
-                else if(phi.g > phi.r && phi.g > phi.b){double t = 1.0 / phi.g; phi = phi * t;}
-                else {double t = 1.0 / phi.b; phi = phi * t;}
-
+                phi = phi * obj->getTexture(pos, c.collided_num - 1);
+                double t;
+                if(phi.r > phi.g && phi.r > phi.b){t = 1.0 / phi.r; phi = phi * t;}
+                else if(phi.g > phi.r && phi.g > phi.b){t = 1.0 / phi.g; phi = phi * t;}
+                else {t = 1.0 / phi.b; phi = phi * t;}
+                if(fabs(t) > INF) return;
                 photonTrace(reflect_ray, times + 1, absorbing, phi, r, d3 + 3, seed);
             }
-        }else if (p < obj->material->diffuse_percent + obj->material->refract_percent + obj->material->reflect_percent && times < 10){
+        }else if (p < c.m->diffuse_percent + c.m->refract_percent + c.m->reflect_percent && times < 10){
 
                 Ray reflect_ray(pos, ray.dir.reflect(normal_vector));
-                phi = phi * obj->getTexture(pos);
-                if(phi.r > phi.g && phi.r > phi.b){double t = 1.0 / phi.r; phi = phi * t;}
-                else if(phi.g > phi.r && phi.g > phi.b){double t = 1.0 / phi.g; phi = phi * t;}
-                else {double t = 1.0 / phi.b; phi = phi * t;}
-
+                phi = phi * obj->getTexture(pos, c.collided_num - 1);
+                double t;
+                if(phi.r > phi.g && phi.r > phi.b){t = 1.0 / phi.r; phi = phi * t;}
+                else if(phi.g > phi.r && phi.g > phi.b){t = 1.0 / phi.g; phi = phi * t;}
+                else {t = 1.0 / phi.b; phi = phi * t;}
+                if(fabs(t) > INF) return;
                 photonTrace(reflect_ray, times + 1, absorbing, phi, r, d3 + 3, seed);
         }
     }
