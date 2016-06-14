@@ -1,4 +1,6 @@
 #include "kdtree_set.h"
+#include <thread>
+#include <mutex>
 #include <vector>
 struct HitPoint
 {
@@ -14,6 +16,7 @@ struct HitPoint
 
 class HitMap{
 public:
+    std::mutex* mlock;
     std::vector<HitPoint> points;
     Node * root;//different kdtree share the same node class
     void build();

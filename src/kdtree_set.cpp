@@ -147,7 +147,7 @@ void KdtreeSet::build(){
     }
 }
 void KdtreeSet::buildtree(Node * x, const std::vector<int>& tris, AABB b){
-    const double LIMIT = 2;
+    const double LIMIT = 1;
     if(((b.max[0] - b.min[0]) * (b.max[1] - b.min[1]) + (b.max[0] - b.min[0]) * (b.max[2] - b.min[2]) + (b.max[1] - b.min[1]) * (b.max[2] - b.min[2])) * tris.size() < LIMIT){
         x->data = tris;
         x->dimension = -1;

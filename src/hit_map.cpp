@@ -46,10 +46,12 @@ void HitMap::update(Node * x, Vec3 pos, Color phi, Vec3 dir, double r){
     if(x->dimension == -1){
         for(auto num: x->data)
             if((points[num].pos - pos).mod2() < r * r){
+                mlock->lock();
                 points[num].n ++;
                 double value = points[num].normal_vector / dir;
                 if(value < 0)
                     points[num].sum = points[num].sum + phi * -value;
+                mlock->unlock();
             }
         return;
     }

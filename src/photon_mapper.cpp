@@ -1,6 +1,6 @@
 #include "photon_mapper.h"
 using namespace std;
-const double beer_const = 1;
+const double beer_const = 0.5;
 PhotonMapper::PhotonMapper(std::string filename)
 {
     ifstream fin(filename.c_str());
@@ -18,10 +18,16 @@ void PhotonMapper::buildHitMap(){
             // calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
             const int SAMPLENUM = 4;
             std::vector<Vec3> sp = scene.camera.getSamplePoints(i, j, SAMPLENUM);
-            for(auto& p: sp){
+            vector<thread> thpool(SAMPLENUM);
+            for(int k = 0;k < sp.size();k++){
+                auto &p = sp[k];
                 Ray sight = Ray(scene.camera.lens, scene.camera.lens - p );
-                calc(sight, 0, Color(0, 0, 0), i, j, Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM));
+                Color cc = Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM);
+                auto func = [&sight, cc, i, j](PhotonMapper* ppm){ppm->calc(sight, 0, Color(0, 0, 0), i, j, cc);};
+                thpool[k] = thread(func, this);
             }
+            for(int k = 0;k < sp.size();k++)
+                thpool[k].join();
         }
     hitmap.build();
 }
@@ -31,7 +37,9 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
     Collider c, d = scene.light_source -> collide(ray);
     Object * obj = scene.firstObject(ray, c);
     if(d.collided_num && (!c.collided_num || d.t - EPS < c.t) ){
+        hitmap.mlock->lock();
         scene.camera.film->setColor(xx, yy, scene.camera.film->getColor(xx, yy) + scene.light_source->color * weight);
+        hitmap.mlock->unlock();
         return ;
     }
     if(!c.collided_num) return ;
@@ -49,7 +57,9 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
         e.in_vector = ray.dir;
         e.imgx = xx;
         e.imgy = yy;
+        hitmap.mlock->lock();
         hitmap.points.push_back(e);
+        hitmap.mlock->unlock();
     }
     // refraction
     double reflect_percent = c.m->reflect_percent;
@@ -68,29 +78,37 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
     }
 }
 
-void PhotonMapper::solve(){
+void PhotonMapper::solve(){   
+    hitmap.mlock = new mutex(); 
     vector< vector<Color> > colormap(scene.camera.film->getN(), std::vector<Color>(scene.camera.film->getM(), Color(0, 0, 0)));
     vector< vector<Color> > directmap(scene.camera.film->getN(), std::vector<Color>(scene.camera.film->getM(), Color(0, 0, 0)));
     buildHitMap();
-    for(int i = 0;i < scene.camera.film->getN();i++)
-        for(int j = 0;j < scene.camera.film->getM();j++)
-            directmap[i][j] = scene.camera.film->getColor(i, j);
+    // for(int i = 0;i < scene.camera.film->getN();i++)
+    //     for(int j = 0;j < scene.camera.film->getM();j++)
+    //         directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
-    const int rounds = 100000, photon_num = 3000000;
+    const int rounds = 100000, photon_num = 1000000;
     double source_energy = 1000;
-    double r = 0.1;
+    double r = 0.12;
     long long seed = 1000;
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
-        if(rd % 5 == 1) {
+        if(rd % 10 == 9) {
             hitmap.points.clear();
             delete hitmap.root;
             hitmap.root = NULL;
             buildHitMap();
         }
-        for(int i = 0;i < photon_num;i++){
+        const int THNUM = 16;
+        std::vector<thread> thpool(THNUM);
+        for(int i = 0;i < photon_num;i+=THNUM){
             seed ++;
-            photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
+            for(int j = 0;j < THNUM;j++){
+                thpool[j] = thread(&PhotonMapper::photonTrace, this, scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
+                //photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
+            }
+            for(int j = 0;j < THNUM;j++)
+                thpool[j].join();
             if(i % 10000 == 0)
             cout << "emit a photon: "<<i <<" / " <<photon_num<<endl;
         }
