@@ -3,8 +3,8 @@ Camera
     center -6.5 6.8 5
     height 0.77
     width 1.28
-    h 100
-    w 150
+    h 768
+    w 1280
 end
 PointSource
     pos 0 3 4
