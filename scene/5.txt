@@ -33,7 +33,7 @@ Plane
     color 1 1 1
     reflect_percent 0
     refract_percent 0
-    diffuse_percent 0.5
+    diffuse_percent 0.2
     refract_index 1.5
     end
 end
@@ -58,7 +58,7 @@ Sphere
         refract_percent 0.6
         diffuse_percent 0
         refract_index 1.1
-        color 0.5 0.5 1 
+        color 1 1 1 
         absorb_color 0.5 0.5 1 
         high_light 0.2
     end
