@@ -111,7 +111,7 @@ void PhotonMapper::solve(){
     //         directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
     const int rounds = 100000, photon_num = 1000000;
-    double source_energy = 400;
+    double source_energy = 700;
     double r = 0.2;
     const int THNUM = 4;
     vector<long long> seed;
