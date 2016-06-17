@@ -97,7 +97,8 @@ void Scene::readFromObj(std::string inputfile, double b, Vec3 dpos, Vec3 angle){
       tmp->reflect_percent = 1 - materials[i].specular[0];
       tmp->refract_percent = materials[i].shininess;
       tmp->diffuse_percent = 1 - tmp->refract_percent - tmp->reflect_percent;
-      tmp->absorb_color = tmp->color = Color(materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
+      tmp->color = Color(materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
+      tmp->absorb_color = Color(1,1,1) - tmp->color;
       tmp->refract_index = materials[i].ior;
       if(materials[i].diffuse_texname != ""){
         tmp->img.read(materials[i].diffuse_texname);

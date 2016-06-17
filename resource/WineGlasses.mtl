@@ -14,7 +14,7 @@ newmtl wire_135006006
 
 newmtl wire_138008110
 	Ns 0.9
-	Ni 1.7
+	Ni 1
 	d 1
 	Tr 0
 	Tf 1 1 1

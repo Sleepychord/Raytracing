@@ -1,6 +1,6 @@
 #include "photon_mapper.h"
 using namespace std;
-const double beer_const = 0.5;
+const double beer_const = 0.7;
 PhotonMapper::PhotonMapper(std::string filename)
 {
     ifstream fin(filename.c_str());
@@ -112,13 +112,13 @@ void PhotonMapper::solve(){
     cerr<< "finish buildHitMap"<<endl;
     const int rounds = 100000, photon_num = 1000000;
     double source_energy = 400;
-    double r = 0.4;
+    double r = 0.2;
     const int THNUM = 4;
     vector<long long> seed;
     for(int i = 0;i < THNUM;i++)
         seed.push_back(100 + i);
     std::vector<thread> thpool(THNUM);
-    auto func = [photon_num, THNUM, &seed, r](int x, PhotonMapper* ppm){
+    auto func = [photon_num, THNUM, &seed, &r](int x, PhotonMapper* ppm){
     for(int i = 0;i < photon_num;i++){
         seed[x]+= THNUM;
                     //thpool[j] = thread(&PhotonMapper::photonTrace, this, scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
@@ -196,7 +196,7 @@ void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color
             photonTrace(Ray(pos, d), times + 1, absorbing, phi, r, d3 + 3, seed);
         }
     }else if (p < c.m->diffuse_percent + c.m->refract_percent){
-        if(times < 6){
+        if(times < 15){
             Ray refract_ray(pos,Vec3(0,0,0));
             double next_ri = from_out? 1.0/c.m->refract_index: c.m->refract_index;
             if(ray.dir.refract(normal_vector, next_ri, refract_ray.dir))
@@ -212,7 +212,7 @@ void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color
                 if(fabs(t) > INF) return;
                 photonTrace(reflect_ray, times + 1, absorbing, phi, r, d3 + 3, seed);
             }
-        }else if (p < c.m->diffuse_percent + c.m->refract_percent + c.m->reflect_percent && times < 10){
+        }else if (p < c.m->diffuse_percent + c.m->refract_percent + c.m->reflect_percent && times < 15){
 
                 Ray reflect_ray(pos, ray.dir.reflect(normal_vector));
                 phi = phi * obj->getTexture(pos, c.collided_num - 1);

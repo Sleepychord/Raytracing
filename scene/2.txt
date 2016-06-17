@@ -64,7 +64,6 @@ Plane
     normal_vector -1 0 0
 end
 
-
 KdtreeSet
     obj ./resource/dragon.obj 1.4 6.5 -1 1.6 90 -5 60
     material
