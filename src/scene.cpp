@@ -38,6 +38,10 @@ std::istream& operator >> (std::istream& fin, Scene& s){
                 fin >> b >> dpos >> angle;
                 s.readFromObj(inputfile, b, dpos, angle);
             }
+            else if(tmp == "Medium"){
+                s.medium = new Medium();
+                fin >> (* s.medium);
+            }
             else{
                 cerr << "read error in scene, tmp is "<<tmp<<endl;
                 assert(0);
@@ -91,9 +95,9 @@ void Scene::readFromObj(std::string inputfile, double b, Vec3 dpos, Vec3 angle){
     for (size_t i = 0; i < materials.size(); i++) {
       Material * tmp = new Material();
       tmp->reflect_percent = 1 - materials[i].specular[0];
-      tmp->refract_percent = 1 - materials[i].dissolve;
+      tmp->refract_percent = materials[i].shininess;
       tmp->diffuse_percent = 1 - tmp->refract_percent - tmp->reflect_percent;
-      tmp->color = Color(materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
+      tmp->absorb_color = tmp->color = Color(materials[i].diffuse[0], materials[i].diffuse[1], materials[i].diffuse[2]);
       tmp->refract_index = materials[i].ior;
       if(materials[i].diffuse_texname != ""){
         tmp->img.read(materials[i].diffuse_texname);
@@ -128,6 +132,7 @@ void Scene::readFromObj(std::string inputfile, double b, Vec3 dpos, Vec3 angle){
         tt = tt.rotate(Vec3(0,0,1), angle.z/ 180.0 * PI);
 
         tmp->vertices.push_back(tt * b + dpos);
+        //if(tmp->vertices.size()==1) {cerr<<"pos: "<<tmp->vertices[0].x <<" "<<tmp->vertices[0].y<<" "<<tmp->vertices[0].z<<endl;sleep(5);}
         if(shapes[i].mesh.texcoords.size() > 2 * v ){
             tmp->imgy.push_back(shapes[i].mesh.texcoords[2 * v]);
             tmp->imgx.push_back(shapes[i].mesh.texcoords[2 * v + 1]);

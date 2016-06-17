@@ -14,5 +14,5 @@ public:
     double h, w;
     friend std::istream& operator >> (std::istream& fin, Camera&);
     Vec3 getPoint(double x, double y);
-    std::vector<Vec3> getSamplePoints(double x, double y, int num);
+    Vec3 getSamplePoint(double x, double y, int, long long seed);
 }; 

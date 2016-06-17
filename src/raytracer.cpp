@@ -72,7 +72,7 @@ Color Raytracer::calc(Ray& ray, int times, double& dist, bool in_refract){
     double index = 0;
     Vec3 pos = ray.pos + ray.dir * c.t;
     Ray reflect_ray(pos, ray.dir.reflect(c.normal_vector));
-    if(obj->material-> diffuse_percent > EPS){
+    if(c.m-> diffuse_percent > EPS){
         std::vector<Ray> lights = scene.light_source->getLights(pos);
         //phong
         for(int i = 0;i < lights.size();i++){
@@ -80,28 +80,28 @@ Color Raytracer::calc(Ray& ray, int times, double& dist, bool in_refract){
             index += abs(c.normal_vector.unitize() / lights[i].dir);
         }
 
-        index = obj->material->diffuse_percent * index / lights.size();//diffusion
-        index += pow(lights[0].dir / reflect_ray.dir, 50) * obj->material->high_light;//high_light
+        index = c.m->diffuse_percent * index / lights.size();//diffusion
+        index += pow(lights[0].dir / reflect_ray.dir, 50) * c.m->high_light;//high_light
     }
     if(index > 1) index = 1;
     Color ret(index, index, index);
-    ret = ret * scene.light_source->color * obj->getTexture(pos);
+    ret = ret * scene.light_source->color * obj->getTexture(pos, c.collided_num - 1);
     // refraction
-    double reflect_percent = obj->material->reflect_percent;
-    if(obj->material->refract_percent > EPS && times < 10){
+    double reflect_percent = c.m->reflect_percent;
+    if(c.m->refract_percent > EPS && times < 10){
         Ray refract_ray(pos,Vec3(0,0,0));
-        if(ray.dir.refract(c.normal_vector, in_refract?obj->material->refract_index: 1/obj->material->refract_index, refract_ray.dir)){
+        if(ray.dir.refract(c.normal_vector, in_refract?c.m->refract_index: 1/c.m->refract_index, refract_ray.dir)){
             Color remote_color = calc(refract_ray, times + 1, collide_dist, !in_refract);
             if(in_refract) collide_dist = 0;
             //cout<<collide_dist<<" "<<remote_color.r <<" "<<remote_color.g<<endl;
-            remote_color = remote_color * (obj->material->absorb_color * -collide_dist).Exp();
-            ret += remote_color * obj->material->refract_percent;
+            remote_color = remote_color * (c.m->absorb_color * -collide_dist).Exp();
+            ret += remote_color * c.m->refract_percent;
         }
-        else reflect_percent += obj->material->refract_percent;
+        else reflect_percent += c.m->refract_percent;
     }
     // reflection
     if(reflect_percent > EPS && times < 10){
-        ret += reflect_percent * calc(reflect_ray, times + 1, collide_dist, in_refract)* obj->getTexture(pos);
+        ret += reflect_percent * calc(reflect_ray, times + 1, collide_dist, in_refract)* obj->getTexture(pos, c.collided_num - 1);
     }
     ret.Confine();
     dist = c.t;

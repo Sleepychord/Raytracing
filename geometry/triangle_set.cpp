@@ -39,7 +39,10 @@ Color TriangleSet::getTexture(Vec3& v0, int i){
                     y1 = vertices[triangles[i].v0].z, y2 = vertices[triangles[i].v1].z, y3 = vertices[triangles[i].v2].z, y0 = v0.z;
             double u = ((x0 - x3)*(y2 - y3) - (y0 - y3)*(x2 - x3)) / ((x1 - x3)*(y2 - y3) - (y1 - y3)*(x2 - x3));
             double v = (fabs(x2 - x3) > EPS) ? ((x0 - x3) - u * (x1 - x3)) / (x2 - x3) : ((y0 - y3) - u * (y1 - y3)) / (y2 - y3);
-            assert(!(u < 0 || v < 0 || 1 - u - v < 0));
+            if((u < 0 || v < 0 || 1 - u - v < 0)){
+                cerr<< u <<" "<<v<<endl;
+                assert(0);
+            }
             double xx = (imgx[triangles[i].v0] * u + imgx[triangles[i].v1] * v + imgx[triangles[i].v2] * (1 - u - v)),
                    yy = (imgy[triangles[i].v0] * u + imgy[triangles[i].v1] * v + imgy[triangles[i].v2] * (1 - u - v));
         return triangles[i].m->img.getColor(xx, yy);
@@ -57,9 +60,9 @@ std::istream& operator >>(std::istream& fin, TriangleSet& s)
         }
         else if (tmp == "obj"){
             string filename, t;
-            Vec3 pos, axis;
-            double p, angel;
-            fin >> filename >> pos >> p >> axis >>angel;
+            Vec3 pos, angel;
+            double p;
+            fin >> filename >> pos >> p >>angel;
             angel = angel * PI / 180.0;
             ifstream resource(filename);
             cerr<< "reading obj"<<endl;
@@ -72,7 +75,7 @@ std::istream& operator >>(std::istream& fin, TriangleSet& s)
                     if(t == "v")
                     {                    
                         resource >> vertex;
-                        vertex = (vertex * p).rotate(axis, angel) + pos;
+                        vertex = (vertex * p).rotate(Vec3(1,0,0), angel.x).rotate(Vec3(0,1,0),angel.y).rotate(Vec3(0,0,1),angel.z) + pos;
                         s.vertices.push_back(vertex);
                     }                    
                     else {

@@ -42,21 +42,28 @@ void HitMap::buildtree(Node* x, const std::vector<int>& p){
     buildtree(x->r, half);
 }
 
-void HitMap::update(Node * x, Vec3 pos, Color phi, Vec3 dir, double r){
+void HitMap::update(Node * x, Vec3 pos, Color phi, Vec3 dir, Vec3 nv, double r){
     if(x->dimension == -1){
         for(auto num: x->data)
             if((points[num].pos - pos).mod2() < r * r){
-                mlock->lock();
-                points[num].n ++;
-                double value = points[num].normal_vector / dir;
-                if(value < 0)
-                    points[num].sum = points[num].sum + phi * -value;
-                mlock->unlock();
+                //
+                {
+                    //mlock->lock();
+                    points[num].n ++;
+                    if(points[num].normal_vector.mod2() < EPS && nv.mod2() < EPS)
+                        points[num].sum = points[num].sum + phi;
+                    else if ((points[num].normal_vector * nv).mod2() < EPS){
+                        double value = points[num].normal_vector / dir;
+                        if(value < 0)
+                            points[num].sum = points[num].sum + phi * -value;
+                    }
+                    //mlock->unlock();
+                }
             }
         return;
     }
     if((x->dimension == 0 && pos.x - r <= x->split) || (x->dimension == 1 && pos.y - r <= x->split) || (x->dimension == 2 && pos.z - r <= x->split))
-        update(x->l, pos, phi, dir, r);    
+        update(x->l, pos, phi, dir, nv,r);    
     if((x->dimension == 0 && pos.x + r >= x->split) || (x->dimension == 1 && pos.y + r >= x->split) || (x->dimension == 2 && pos.z + r >= x->split))
-        update(x->r, pos, phi, dir,r);
+        update(x->r, pos, phi, dir, nv,r);
 }

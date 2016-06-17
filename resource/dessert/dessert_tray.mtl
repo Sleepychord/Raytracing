@@ -1,0 +1,214 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 17.07.2014 22:04:02
+
+newmtl PORCELAIN
+    Ns 0.7
+	Ni 1.600000
+	d 1
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 1.000000 1.000000 0.901961
+	Ks 0.810000 0.810000 0.810000
+	Ke 0.000000 0.000000 0.000000
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl 02___Default
+    Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/4392651590_24f5cc03e6_o.jpg
+	map_Kd ./resource/dessert/texture/4392651590_24f5cc03e6_o.jpg
+	map_bump -bm 0.300000 ./resource/dessert/texture/Map__101_Color_Correction.tga
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl rose_sepal
+    Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.810000 0.810000 0.810000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/roseSepal_col.bmp
+	map_Kd ./resource/dessert/texture/roseSepal_col.bmp
+	map_bump ./resource/dessert/texture/roseSepal_bump.bmp
+	bump ./resource/dessert/texture/roseSepal_bump.bmp
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl 01___Defausltss
+    Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/Map__102_Color_Correction.tga
+	map_Kd ./resource/dessert/Map__102_Color_Correction.tga
+
+newmtl Material__39
+    Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.831373 0.145098 0.258824
+	Ks 0.810000 0.810000 0.810000
+	Ke 0.000000 0.000000 0.000000
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl 01___Defausltxxxxss
+    Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/Map__103_Color_Correction.tga
+	map_Kd ./resource/dessert/Map__103_Color_Correction.tga
+
+newmtl dfaf
+    Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.540000 0.540000 0.540000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/cupcake_top.jpg
+	map_Kd ./resource/dessert/texture/cupcake_top.jpg
+	map_bump ./resource/dessert/texture/cupcake_top.jpg
+	bump ./resource/dessert/texture/cupcake_top.jpg
+
+newmtl 01___Default
+	Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/cupcake_b_cup.jpg
+	map_Kd ./resource/dessert/texture/cupcake_b_cup.jpg
+
+newmtl dfafxxxxx
+	Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.540000 0.540000 0.540000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/cupcake_B_top.jpg
+	map_Kd ./resource/dessert/texture/cupcake_B_top.jpg
+	map_bump ./resource/dessert/texture/cupcake_B_top.jpg
+	bump ./resource/dessert/texture/cupcake_B_top.jpg
+
+newmtl 07___Default
+	Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.180000 0.180000 0.180000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/cream.jpg
+	map_Kd ./resource/dessert/texture/cream.jpg
+	map_bump ./resource/dessert/texture/cream.jpg
+	bump ./resource/dessert/texture/cream.jpg
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl banana
+	Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.372549 1.000000 0.121569
+	Ks 0.540000 0.540000 0.540000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/banana.jpg
+	map_Kd ./resource/dessert/texture/banana.jpg
+	map_bump -bm 0.300000 ./resource/dessert/Map__104_Color_Correction.tga
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl 14___Default2
+	Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0../resource/dessert/000000 0.000000 0.000000
+	Kd 0.372549 1.000000 0.121569
+	Ks 0.360000 0.360000 0.360000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/4396000601_494f609271_o.jpg
+	map_Kd ./resource/dessert/texture/4396000601_494f609271_o.jpg
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl grape_leaves
+	Ns 0
+	Ni 1.600000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.500000 0.500000 0.500000
+	Ks 0.630000 0.630000 0.630000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka ./resource/dessert/texture/grape_leaf.jpg
+	map_Kd ./resource/dessert/texture/grape_leaf.jpg
+	map_d ./resource/dessert/texture/grape_leaf_alpha.png
+	map_bump -bm 0.300000 ./resource/dessert/Map__105_Color_Correction.tga
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga
+
+newmtl Material__2054
+	Ns 0
+	Ni 6.000000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.047059 0.047059 0.047059
+	Ks 0.900000 0.900000 0.900000
+	Ke 0.000000 0.000000 0.000000
+	map_Kd ./resource/dessert/wooden.jpg
+	map_refl ./resource/dessert/Raytrace_Raytrace.tga

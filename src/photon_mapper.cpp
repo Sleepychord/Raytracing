@@ -7,28 +7,31 @@ PhotonMapper::PhotonMapper(std::string filename)
     fin >> scene;
 }
 void PhotonMapper::buildHitMap(){
-    for(int i = 0;i < scene.camera.film->getN();i++)
-        for(int j = 0;j < scene.camera.film->getM();j++)
-        {
-            double dist = 0;
-            if(j == 0) cerr<< "solve line "<<i<<endl;
-            if(i == 346 && j == 141) 
-                dist = 0;
-            // Ray sight = Ray(scene.camera.lens, scene.camera.lens - scene.camera.getPoint(i, j) );
-            // calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
-            const int SAMPLENUM = 4;
-            std::vector<Vec3> sp = scene.camera.getSamplePoints(i, j, SAMPLENUM);
-            vector<thread> thpool(SAMPLENUM);
-            for(int k = 0;k < sp.size();k++){
-                auto &p = sp[k];
-                Ray sight = Ray(scene.camera.lens, scene.camera.lens - p );
+    srand(time(0));
+    const int SAMPLENUM = 4;
+    vector<thread> thpool(SAMPLENUM);
+    vector<long long> seed;
+    for(int i = 0;i < SAMPLENUM;i++)
+        seed.push_back(10 + i);
+    auto func = [SAMPLENUM, &seed](int x, PhotonMapper* ppm){
+        for(int i = 0;i < ppm->scene.camera.film->getN();i++)
+            for(int j = 0;j < ppm->scene.camera.film->getM();j++)
+            {
+                seed[x] += SAMPLENUM;
+                double dist = 0;
+                if(x == 0 && j == 0) cerr<< "solve line "<<i<<endl;
+                // Ray sight = Ray(ppm->scene.camera.lens, ppm->scene.camera.lens - ppm->scene.camera.getPoint(i, j) );
+                // calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
+                Vec3 p = ppm->scene.camera.getSamplePoint(i, j, x, seed[x]);
+                Ray sight = Ray(ppm->scene.camera.lens, ppm->scene.camera.lens - p );
                 Color cc = Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM);
-                auto func = [&sight, cc, i, j](PhotonMapper* ppm){ppm->calc(sight, 0, Color(0, 0, 0), i, j, cc);};
-                thpool[k] = thread(func, this);
+                ppm->calc(sight, 0, Color(0, 0, 0), i, j, cc);
             }
-            for(int k = 0;k < sp.size();k++)
-                thpool[k].join();
-        }
+    };
+    for(int i = 0;i < SAMPLENUM;i++)
+        thpool[i] = thread(func, i, this);
+    for(int i = 0;i < SAMPLENUM;i++)
+        thpool[i].join();
     hitmap.build();
 }
 
@@ -44,6 +47,26 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
     }
     if(!c.collided_num) return ;
     // if collider found  
+    if(times == 0 && scene.medium){
+        double wmedium = scene.medium -> getWeight(ray, c.t);
+        weight = weight * (1 - wmedium);
+        if(wmedium > EPS){// hit the medium
+            const int MEDIUMNUM = 50;
+            vector<double> mpos = scene.medium -> getPos(ray, c.t, MEDIUMNUM);
+            for(int k = 0;k < MEDIUMNUM;k++){
+                HitPoint e;
+                e.weight = Color(wmedium / MEDIUMNUM, wmedium / MEDIUMNUM, wmedium / MEDIUMNUM);
+                e.pos = ray.pos + ray.dir * mpos[k];
+                e.normal_vector = Vec3(0,0,0);
+                e.in_vector = ray.dir;
+                e.imgx = xx;
+                e.imgy = yy;
+                hitmap.mlock->lock();
+                hitmap.points.push_back(e);
+                hitmap.mlock->unlock();
+            }
+        }
+    }
     Vec3 pos = ray.pos + ray.dir * c.t;
     bool from_out = (c.normal_vector / ray.dir < 0);
     Vec3 normal_vector = from_out? c.normal_vector: c.normal_vector * -1;//real normal_vector
@@ -88,9 +111,22 @@ void PhotonMapper::solve(){
     //         directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
     const int rounds = 100000, photon_num = 1000000;
-    double source_energy = 1000;
-    double r = 0.12;
-    long long seed = 1000;
+    double source_energy = 400;
+    double r = 0.4;
+    const int THNUM = 4;
+    vector<long long> seed;
+    for(int i = 0;i < THNUM;i++)
+        seed.push_back(100 + i);
+    std::vector<thread> thpool(THNUM);
+    auto func = [photon_num, THNUM, &seed, r](int x, PhotonMapper* ppm){
+    for(int i = 0;i < photon_num;i++){
+        seed[x]+= THNUM;
+                    //thpool[j] = thread(&PhotonMapper::photonTrace, this, scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
+        ppm->photonTrace(ppm->scene.light_source->getPhoton(seed[x]), 0, Color(0,0,0), ppm->scene.light_source->color, r, 4, seed[x]);
+        if(x == 0 && i % 10000 == 0)
+        cout << "emit a photon: "<<i<<" / " <<photon_num<<endl;
+    }
+    };
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
         if(rd % 10 == 9) {
@@ -99,19 +135,10 @@ void PhotonMapper::solve(){
             hitmap.root = NULL;
             buildHitMap();
         }
-        const int THNUM = 16;
-        std::vector<thread> thpool(THNUM);
-        for(int i = 0;i < photon_num;i+=THNUM){
-            seed ++;
-            for(int j = 0;j < THNUM;j++){
-                thpool[j] = thread(&PhotonMapper::photonTrace, this, scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
-                //photonTrace(scene.light_source->getPhoton(seed), 0, Color(0,0,0), scene.light_source->color, r, 4, seed);
-            }
-            for(int j = 0;j < THNUM;j++)
-                thpool[j].join();
-            if(i % 10000 == 0)
-            cout << "emit a photon: "<<i <<" / " <<photon_num<<endl;
-        }
+        for(int i = 0;i < THNUM;i++)
+            thpool[i] = thread(func, i, this);
+        for(int i = 0;i < THNUM;i++)
+            thpool[i].join();
         for(int i = 0;i < scene.camera.film->getN();i++)
             for(int j = 0;j < scene.camera.film->getM();j++){
                 colormap[i][j] = colormap[i][j] * rd / (rd + 1);
@@ -140,11 +167,20 @@ void PhotonMapper::photonTrace(const Ray& ray, int times, Color absorbing, Color
     if(!c.collided_num) return;
     Vec3 pos = ray.pos + ray.dir * c.t;
     bool from_out = (c.normal_vector / ray.dir < 0);
+
+    if(!from_out && scene.medium){
+        double tmedium = scene.medium -> collide(ray, c.t);
+        if(tmedium > 0){// hit the medium
+            hitmap.update(hitmap.root, ray.pos + ray.dir * tmedium, phi, ray.dir, Vec3(0,0,0), r);
+            return ;
+        }
+    }
+
     Vec3 normal_vector = from_out? c.normal_vector: c.normal_vector * -1;//real normal_vector 
     phi = phi * (absorbing * (-beer_const) * (ray.pos - pos).mod()).Exp();// beer
     double p = hal(d3, seed);
     if(p < c.m->diffuse_percent){
-        hitmap.update(hitmap.root, pos, phi, ray.dir, r);
+        hitmap.update(hitmap.root, pos, phi, ray.dir, normal_vector, r);
         if(times < 10){
             phi = phi * obj->getTexture(pos, c.collided_num - 1);
             double t;

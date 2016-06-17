@@ -1,4 +1,5 @@
 #pragma once
+#include <unistd.h>
 #include "camera.h"
 #include "object.h"
 #include "sphere.h"
@@ -9,6 +10,7 @@
 #include "kdtree_set.h"
 #include <string>
 #include "tiny_obj_loader.h"
+#include "medium.h"
 class  Scene
 {
 public:
@@ -20,6 +22,7 @@ public:
      }
     /* data */
     Source* light_source; 
+    Medium* medium;
     Camera camera;
     std::vector<Object *> objs;
     friend std::istream& operator >> (std::istream& fin, Scene& s);

@@ -63,3 +63,18 @@ Plane
     base 12 0 0
     normal_vector -1 0 0
 end
+
+
+KdtreeSet
+    obj ./resource/dragon.obj 1.4 6.5 -1 1.6 90 -5 60
+    material
+        reflect_percent 0
+        refract_percent 0.8
+        diffuse_percent 0.1
+        refract_index 1.7
+        color 1 1 1
+        absorb_color 1 1 1
+        high_light 0.1
+    end
+end
+Obj ./resource/dessert/dessert_tray.obj 5.3 -1 10 -4.8 90 0 0

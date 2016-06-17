@@ -21,5 +21,5 @@ public:
     Node * root;//different kdtree share the same node class
     void build();
     void buildtree(Node * x, const std::vector<int>&);
-    void update(Node * x, Vec3 pos, Color phi, Vec3 dir, double r);
+    void update(Node * x, Vec3 pos, Color phi, Vec3 dir, Vec3 ,double r);
 };
