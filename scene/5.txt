@@ -6,7 +6,7 @@ Camera
     h 800
     w 1200
     r 0.2
-    focus_dis 11.5
+    focus_dis 9.6
 end
 
 RectSource
@@ -39,7 +39,7 @@ Plane
     refract_index 1.5
     end
 end
-Obj ./resource/WineGlasses.obj 0.04 0 3.5 -2 90 0 0
+Obj ./resource/WineGlasses.obj 0.04 -0.5 3.7 -2 90 0 0
 KdtreeSet
     obj ./resource/dragon.obj -1.3 7.4 -0.9 1.6 90 0 50
     material
