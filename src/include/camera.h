@@ -11,8 +11,9 @@ public:
     ~Camera(){delete film;}
     Image* film;
     Vec3 center, height, width, lens;
-    double h, w;
+    double h, w, focus_dis, r;
     friend std::istream& operator >> (std::istream& fin, Camera&);
     Vec3 getPoint(double x, double y);
     Vec3 getSamplePoint(double x, double y, int, long long seed);
+    Ray getDepthRay(double x, double y, int, long long);
 }; 

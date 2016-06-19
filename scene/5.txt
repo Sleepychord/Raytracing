@@ -5,6 +5,8 @@ Camera
     width 1.5
     h 800
     w 1200
+    r 0.2
+    focus_dis 11.5
 end
 
 RectSource

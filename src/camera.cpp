@@ -10,6 +10,8 @@ std::istream& operator >> (std::istream& fin, Camera& c){
         else if (tmp == "w") fin >>c.w;
         else if (tmp == "center") fin >> c.center;
         else if (tmp == "width") fin >> mw;
+        else if (tmp == "r") fin >> c.r;
+        else if (tmp == "focus_dis") fin >> c.focus_dis;
         else if (tmp == "height") fin >> mh;
         else {
             cerr << "read camera error, string is "<<tmp <<endl;
@@ -28,7 +30,12 @@ Vec3 Camera::getPoint(double x, double y){
 }
 
 Vec3 Camera::getSamplePoint(double x, double y, int su, long long seed){
-    return center + height * ((x + hal(su, seed) - 0.5) / h - 0.5) + width * ((y + hal(su, seed) - 0.5) / w - 0.5);
+    return center + height * ((x + hal(su, seed) - 0.5) / h - 0.5) + width * ((y + hal(su, seed + 1) - 0.5) / w - 0.5);
+}
+Ray Camera::getDepthRay(double x, double y, int su, long long seed){
+    double t = focus_dis / (lens - center).mod();
+    Vec3 p = (lens - getPoint(x, y)) * t + lens, q = lens + height.unitize() * (r * hal(su, seed)) + width.unitize() * (r * hal(su, seed + 1));
+    return Ray(q, p - q);
 }
 
  

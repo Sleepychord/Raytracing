@@ -8,22 +8,22 @@ PhotonMapper::PhotonMapper(std::string filename)
 }
 void PhotonMapper::buildHitMap(){
     srand(time(0));
-    const int SAMPLENUM = 4;
+    const int SAMPLENUM = 16;
     vector<thread> thpool(SAMPLENUM);
     vector<long long> seed;
     for(int i = 0;i < SAMPLENUM;i++)
-        seed.push_back(10 + i);
+        seed.push_back(10 + i * 2);
     auto func = [SAMPLENUM, &seed](int x, PhotonMapper* ppm){
         for(int i = 0;i < ppm->scene.camera.film->getN();i++)
             for(int j = 0;j < ppm->scene.camera.film->getM();j++)
             {
-                seed[x] += SAMPLENUM;
+                seed[x] += SAMPLENUM * 2;
                 double dist = 0;
                 if(x == 0 && j == 0) cerr<< "solve line "<<i<<endl;
-                // Ray sight = Ray(ppm->scene.camera.lens, ppm->scene.camera.lens - ppm->scene.camera.getPoint(i, j) );
-                // calc(sight, 0, Color(0, 0, 0), i, j, Color(1, 1, 1));
-                Vec3 p = ppm->scene.camera.getSamplePoint(i, j, x, seed[x]);
-                Ray sight = Ray(ppm->scene.camera.lens, ppm->scene.camera.lens - p );
+
+                //Vec3 p = ppm->scene.camera.getSamplePoint(i, j, x, seed[x]);
+                //Ray sight = Ray(ppm->scene.camera.lens, ppm->scene.camera.lens - p );
+                Ray sight = ppm->scene.camera.getDepthRay(i, j, x, seed[x]);
                 Color cc = Color(1.0 / SAMPLENUM, 1.0 / SAMPLENUM, 1.0 / SAMPLENUM);
                 ppm->calc(sight, 0, Color(0, 0, 0), i, j, cc);
             }
