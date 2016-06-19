@@ -8,7 +8,7 @@ PhotonMapper::PhotonMapper(std::string filename)
 }
 void PhotonMapper::buildHitMap(){
     srand(time(0));
-    const int SAMPLENUM = 4;
+    const int SAMPLENUM = 16;
     vector<thread> thpool(SAMPLENUM);
     vector<long long> seed;
     for(int i = 0;i < SAMPLENUM;i++)
