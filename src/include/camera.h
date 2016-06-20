@@ -14,6 +14,6 @@ public:
     double h, w, focus_dis, r;
     friend std::istream& operator >> (std::istream& fin, Camera&);
     Vec3 getPoint(double x, double y);
-    Vec3 getSamplePoint(double x, double y, int, long long seed);
-    Ray getDepthRay(double x, double y, int, long long);
+    Vec3 getSamplePoint(double x, double y, int);
+    Ray getDepthRay(double x, double y, int);
 }; 
