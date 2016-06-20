@@ -8,7 +8,7 @@ PhotonMapper::PhotonMapper(std::string filename)
 }
 void PhotonMapper::buildHitMap(){
     srand(time(0));
-    const int SAMPLENUM = 16;
+    const int SAMPLENUM = 4;
     vector<thread> thpool(SAMPLENUM);
     vector<long long> seed;
     for(int i = 0;i < SAMPLENUM;i++)
@@ -129,7 +129,7 @@ void PhotonMapper::solve(){
     };
     for(int rd = 0; rd < rounds; rd++){
         cout << "new round "<<rd <<endl;
-        if(rd % 10 == 9) {
+        if(rd % 20 == 19) {
             hitmap.points.clear();
             delete hitmap.root;
             hitmap.root = NULL;

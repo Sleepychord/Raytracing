@@ -3,8 +3,8 @@ Camera
     center -12.5 5.5 5
     height 1
     width 1.5
-    h 2000
-    w 3000
+    h 2400
+    w 3600
     r 0.2
     focus_dis 9.6
 end
