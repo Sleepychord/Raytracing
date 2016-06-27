@@ -24,8 +24,9 @@ Collider TriangleSet::collide(Ray& ray){
 }
 
 Color TriangleSet::getTexture(Vec3& v0, int i){
-    if(triangles[i].m == NULL)
+    if(triangles[i].m == NULL){
         return material->color;
+    }
     else
     if(triangles[i].m->img.getM()){
             double x0 = v0.x, y0 = v0.y;

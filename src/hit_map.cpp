@@ -50,13 +50,12 @@ void HitMap::update(Node * x, Vec3 pos, Color phi, Vec3 dir, Vec3 nv, double r){
                 {
                     //mlock->lock();
                     points[num].n ++;
-                    if(points[num].normal_vector.mod2() < EPS && nv.mod2() < EPS)
-                        points[num].sum = points[num].sum + phi;
-                    else if ((points[num].normal_vector * nv).mod2() < EPS){
-                        double value = points[num].normal_vector / dir;
-                        if(value < 0)
-                            points[num].sum = points[num].sum + phi * -value;
-                    }
+                    // if(points[num].normal_vector.mod2() < EPS && nv.mod2() < EPS)
+                    //points[num].sum = points[num].sum + phi;
+                    // else 
+                    double value = points[num].normal_vector / dir;
+                    if(value < 0)
+                        points[num].sum = points[num].sum + phi * -value;
                     //mlock->unlock();
                 }
             }

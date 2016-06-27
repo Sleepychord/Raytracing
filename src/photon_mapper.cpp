@@ -8,7 +8,7 @@ PhotonMapper::PhotonMapper(std::string filename)
 }
 void PhotonMapper::buildHitMap(){
     srand(time(0));
-    const int SAMPLENUM = 4;
+    const int SAMPLENUM = 8;
     vector<thread> thpool(SAMPLENUM);
     vector<long long> seed;
     for(int i = 0;i < SAMPLENUM;i++)
@@ -47,26 +47,26 @@ void PhotonMapper::calc(Ray& ray, int times, Color absorbing, int xx, int yy, Co
     }
     if(!c.collided_num) return ;
     // if collider found  
-    if(times == 0 && scene.medium){
-        double wmedium = scene.medium -> getWeight(ray, c.t);
-        weight = weight * (1 - wmedium);
-        if(wmedium > EPS){// hit the medium
-            const int MEDIUMNUM = 50;
-            vector<double> mpos = scene.medium -> getPos(ray, c.t, MEDIUMNUM);
-            for(int k = 0;k < MEDIUMNUM;k++){
-                HitPoint e;
-                e.weight = Color(wmedium / MEDIUMNUM, wmedium / MEDIUMNUM, wmedium / MEDIUMNUM);
-                e.pos = ray.pos + ray.dir * mpos[k];
-                e.normal_vector = Vec3(0,0,0);
-                e.in_vector = ray.dir;
-                e.imgx = xx;
-                e.imgy = yy;
-                hitmap.mlock->lock();
-                hitmap.points.push_back(e);
-                hitmap.mlock->unlock();
-            }
-        }
-    }
+    // if(times == 0 && scene.medium){
+    //     double wmedium = scene.medium -> getWeight(ray, c.t);
+    //     weight = weight * (1 - wmedium);
+    //     if(wmedium > EPS){// hit the medium
+    //         const int MEDIUMNUM = 50;
+    //         vector<double> mpos = scene.medium -> getPos(ray, c.t, MEDIUMNUM);
+    //         for(int k = 0;k < MEDIUMNUM;k++){
+    //             HitPoint e;
+    //             e.weight = Color(wmedium / MEDIUMNUM, wmedium / MEDIUMNUM, wmedium / MEDIUMNUM);
+    //             e.pos = ray.pos + ray.dir * mpos[k];
+    //             e.normal_vector = Vec3(0,0,0);
+    //             e.in_vector = ray.dir;
+    //             e.imgx = xx;
+    //             e.imgy = yy;
+    //             hitmap.mlock->lock();
+    //             hitmap.points.push_back(e);
+    //             hitmap.mlock->unlock();
+    //         }
+    //     }
+    // }
     Vec3 pos = ray.pos + ray.dir * c.t;
     bool from_out = (c.normal_vector / ray.dir < 0);
     Vec3 normal_vector = from_out? c.normal_vector: c.normal_vector * -1;//real normal_vector
@@ -106,13 +106,13 @@ void PhotonMapper::solve(){
     vector< vector<Color> > colormap(scene.camera.film->getN(), std::vector<Color>(scene.camera.film->getM(), Color(0, 0, 0)));
     vector< vector<Color> > directmap(scene.camera.film->getN(), std::vector<Color>(scene.camera.film->getM(), Color(0, 0, 0)));
     buildHitMap();
-    // for(int i = 0;i < scene.camera.film->getN();i++)
-    //     for(int j = 0;j < scene.camera.film->getM();j++)
-    //         directmap[i][j] = scene.camera.film->getColor(i, j);
+    for(int i = 0;i < scene.camera.film->getN();i++)
+        for(int j = 0;j < scene.camera.film->getM();j++)
+            directmap[i][j] = scene.camera.film->getColor(i, j);
     cerr<< "finish buildHitMap"<<endl;
     const int rounds = 100000, photon_num = 1000000;
-    double source_energy = 700;
-    double r = 0.2;
+    double source_energy = 30;
+    double r = 0.3;
     const int THNUM = 4;
     vector<long long> seed;
     for(int i = 0;i < THNUM;i++)
@@ -144,7 +144,13 @@ void PhotonMapper::solve(){
                 colormap[i][j] = colormap[i][j] * rd / (rd + 1);
             }
         for(auto & h: hitmap.points){
-            colormap[h.imgx][h.imgy] += h.sum  * h.weight * source_energy / (r * r * photon_num * (rd + 1));
+            Color phi = h.sum  * h.weight * source_energy / (r * r * photon_num);
+            double t;
+            if(phi.r > phi.g && phi.r > phi.b && phi.r > 1){t = 1.0 / phi.r; phi = phi * t;}
+            else if(phi.g > phi.r && phi.g > phi.b && phi.g > 1){t = 1.0 / phi.g; phi = phi * t;}
+            else if(phi.b > 1){t = 1.0 / phi.b; phi = phi * t;}
+
+            colormap[h.imgx][h.imgy] += phi / (rd + 1.0);
             //cerr << h.sum.r <<" "<<h.sum.g << " "<<h.sum.b <<endl;
             h.sum = 0;
             h.n = 0;

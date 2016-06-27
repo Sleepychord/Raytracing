@@ -46,7 +46,7 @@ Collider Sphere::collide(Ray& ray)
 } 
 Color Sphere::getTexture(Vec3& pos, int trinum ){
     if(!material->img.getM())
-        return Color(0.5, 0.5, 1);
+        return material->color;
     Vec3 tmp = (pos - o).unitize();
     double len = acos(tmp / Vec3(0, 0, -1)) * r;
     return material->img.getColor((PI * r + tmp.x * len),

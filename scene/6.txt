@@ -1,0 +1,123 @@
+Camera
+    lens -32 0 5
+    center -40 0 5
+    width 4
+    height 3 
+    h 960
+    w 1280
+end
+RectSource
+    vertices 
+        -4 3 10
+        -4 -3 10
+        0 -3 10
+        0 3 10
+    color 1 1 1
+end
+Plane
+    base 0 0 0
+        normal_vector 0 0 1
+    material
+    reflect_percent 0
+    refract_percent 0
+    diffuse_percent 1
+    refract_index 1.5
+    absorb_color 0 0 0 
+    high_light 0
+    color 1 1 1 
+    end
+end
+Plane
+    base 0 0 10.1
+        normal_vector 0 0 -1
+    material
+    reflect_percent 0
+    refract_percent 0
+    diffuse_percent 1
+    refract_index 1.5
+    absorb_color 0 0 0 
+    high_light 0
+    color 1 1 1 
+    end
+end
+
+Sphere
+    o 3 2.3 2
+    r 2
+    material
+        reflect_percent 1
+        refract_percent 0
+        diffuse_percent 0
+        refract_index 1.7
+        color 1 1 1
+        absorb_color 1 0 1 
+        high_light 0.1
+    end
+end
+
+KdtreeSet
+    obj ./resource/horse.obj -2 -1 2.61 3.2 0 0 0
+    material
+        reflect_percent 0
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.7
+        color 1 1 1
+        absorb_color 1 0.2 1 
+        high_light 0.1
+    end
+end
+
+Plane
+    material
+        reflect_percent 0
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.5
+        absorb_color 1 1 1
+        high_light 0.1
+    end
+    base 12 0 0
+    normal_vector -1 0 0
+end
+
+Plane
+    material
+        reflect_percent 0
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.5
+        absorb_color 1 1 1
+        high_light 0.1
+    end
+    base 6 0 0
+    normal_vector -1 0 0
+end
+Plane
+    material
+        reflect_percent 0
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.5
+        absorb_color 1 1 1
+        color 1 0 0
+        high_light 0
+    end
+    base 0 5.8 0
+    normal_vector 0 1 0
+end
+
+Plane
+    material
+        reflect_percent 0
+        refract_percent 0
+        diffuse_percent 1
+        refract_index 1.5
+        absorb_color 0 0 1
+        color 0 0 1
+        high_light 0
+    end
+    base 0 -5.8 0
+    normal_vector 0 1 0
+end
+

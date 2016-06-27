@@ -24,7 +24,7 @@ Collider Plane::collide(Ray& ray){
 }
 Color Plane::getTexture(Vec3& pos, int trinum ){
     if(!material->img.getM())
-        return Color(1, 1, 1);
+        return material->color;
     Vec3 xaxis = (normal_vector * Vec3(0, 1, 1)).unitize();
     Vec3 yaxis = (normal_vector * xaxis).unitize();
     return material->img.getColor((pos - base) / xaxis, (pos - base) / yaxis);
